@@ -1,0 +1,5 @@
+rasters
+vectors
+__pycache__
+*.pth
+.ipynb_checkpoints
