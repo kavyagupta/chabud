@@ -29,9 +29,6 @@ def parse_args():
         default=1,
         help="Number of output classes in the model",
     )
-    parser.add_argument(
-        "--layer-type", type=str, choices=("dense", "unstructured", "channel", "filter"), help="dense | unstructured | channel | filter"
-    )
 
     # Data
     
