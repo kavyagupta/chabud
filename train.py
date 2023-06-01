@@ -14,7 +14,8 @@ from utils.chabud_dataloader import ChabudDataset, Rescale_train, Rescale_target
 from utils.args import parse_args
 
 
-def train_one_epoch(epoch_index, tb_writer):
+def train_one_epoch(train_loader, net, criterion, 
+                    optimizer, epoch_index, tb_writer, device):
     running_loss = 0.0
     last_loss = 0.0
     running_score = 0.0
@@ -58,8 +59,43 @@ def train_one_epoch(epoch_index, tb_writer):
 
     return last_loss, last_score
 
+def val(val_loader, net, criterion, tb_writer, device):
+    net.eval()
+
+    running_vloss = 0.0
+    running_vscore = 0.0
+
+    # Disable gradient computation and reduce memory consumption.
+    with torch.no_grad():
+        for i, vdata in enumerate(val_loader):
+            vinputs_pre, v_inputs_post, vmask = (
+                vdata[0].to(device),
+                vdata[1].to(device),
+                vdata[2].to(device),
+            )
+            voutputs = net(vinputs_pre, v_inputs_post)
+            vmask = torch.unsqueeze(vmask, 1)
+            vloss = criterion(voutputs, vmask.float())
+            running_vloss += vloss
+
+            voutputs = torch.sigmoid(voutputs)
+            # voutputs[voutputs>=0.5] = 1
+            # voutputs[voutputs<0.5] = 0
+            running_vscore += dice(voutputs, vmask.int())
+
+    avg_vloss = running_vloss / (i + 1)
+    avg_vscore = running_vscore / (i + 1)
+   
+
+    # Log the running loss averaged per batch
+    # for both training and validation
+
+    return avg_vloss, avg_vscore
+
+
 
 def main():
+
     device = torch.device("cuda:0")
     ########Dataloaders #################
     f = open("../CHABUD/vectors/Original_Split-20230524T135331/MASK/metadata.json")
@@ -104,37 +140,17 @@ def main():
 
         # Make sure gradient tracking is on, and do a pass over the data
         net.train(True)
-        avg_loss, avg_score = train_one_epoch(epoch_number, writer)
+        avg_loss, avg_score = train_one_epoch(train_loader=train_loader, net=net, 
+                                                criterion=criterion, optimizer=optimizer,
+                                                epoch_number=epoch_number, tb_writer=writer, 
+                                                device=device)
 
-        running_vloss = 0.0
-        running_vscore = 0.0
-        net.eval()
-
-        # Disable gradient computation and reduce memory consumption.
-        with torch.no_grad():
-            for i, vdata in enumerate(val_loader):
-                vinputs_pre, v_inputs_post, vmask = (
-                    vdata[0].to(device),
-                    vdata[1].to(device),
-                    vdata[2].to(device),
-                )
-                voutputs = net(vinputs_pre, v_inputs_post)
-                vmask = torch.unsqueeze(vmask, 1)
-                vloss = criterion(voutputs, vmask.float())
-                running_vloss += vloss
-
-                voutputs = torch.sigmoid(voutputs)
-                # voutputs[voutputs>=0.5] = 1
-                # voutputs[voutputs<0.5] = 0
-                running_vscore += dice(voutputs, vmask.int())
-
-        avg_vloss = running_vloss / (i + 1)
-        avg_vscore = running_vscore / (i + 1)
-        print("LOSS train {} valid {}".format(avg_loss, avg_vloss))
-        print("score train {} valid {}".format(avg_score, avg_vscore))
-
-        # Log the running loss averaged per batch
-        # for both training and validation
+        
+        
+        avg_vloss, avg_vscore = val(val_loader=val_loader, net=net, 
+                                     criterion=criterion, tb_writer=writer, 
+                                     device=device)
+        
         writer.add_scalars(
             "Training vs. Validation Loss",
             {
@@ -144,6 +160,8 @@ def main():
             epoch_number + 1,
         )
         writer.flush()
+        print("LOSS train {} valid {}".format(avg_loss, avg_vloss))
+        print("score train {} valid {}".format(avg_score, avg_vscore))
 
         # Track best performance, and save the model's state
         if avg_vloss < best_vloss:
