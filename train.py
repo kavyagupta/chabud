@@ -1,31 +1,43 @@
-import torch
-import torch.optim as optim
-from bidate_model import BiDateNet
-import torch.nn as nn
-import torch.nn.functional as F
-from chabud_dataloader import ChabudDataset, Rescale_train, Rescale_target
-from torch.utils.data import DataLoader
 import json
 from datetime import datetime
+
+import torch
+import torch.nn as nn
+import torch.optim as optim
+import torch.nn.functional as F
+from torch.utils.data import DataLoader
 from torch.utils.tensorboard import SummaryWriter
 from torchmetrics.functional import dice
 
+from chabud_dataloader import ChabudDataset, Rescale_train, Rescale_target
+from bidate_model import BiDateNet
 
-device = torch.device("cuda:0") 
-#print(device)
+
+device = torch.device("cuda:0")
+# print(device)
 
 ########Dataloaders #################
-f = open('../CHABUD/vectors/Original_Split-20230524T135331/MASK/metadata.json')
+f = open("../CHABUD/vectors/Original_Split-20230524T135331/MASK/metadata.json")
 data = json.load(f)
-train_list = data['dataset']['train']
-val_list = data['dataset']['val']
+train_list = data["dataset"]["train"]
+val_list = data["dataset"]["val"]
 
-chabud_train = ChabudDataset(json_dir='../CHABUD/vectors/Original_Split-20230524T135331/MASK',data_list = train_list,transform = Rescale_train(512),target_transform = Rescale_target(512))
- 
-chabud_val = ChabudDataset(json_dir='../CHABUD/vectors/Original_Split-20230524T135331/MASK',data_list = val_list,transform = Rescale_train(512),target_transform = Rescale_target(512))
+chabud_train = ChabudDataset(
+    json_dir="../CHABUD/vectors/Original_Split-20230524T135331/MASK",
+    data_list=train_list,
+    transform=Rescale_train(512),
+    target_transform=Rescale_target(512),
+)
+
+chabud_val = ChabudDataset(
+    json_dir="../CHABUD/vectors/Original_Split-20230524T135331/MASK",
+    data_list=val_list,
+    transform=Rescale_train(512),
+    target_transform=Rescale_target(512),
+)
 
 train_loader = DataLoader(chabud_train, batch_size=4, shuffle=True)
-val_loader = DataLoader(chabud_val,batch_size = 4, shuffle = True)
+val_loader = DataLoader(chabud_val, batch_size=4, shuffle=True)
 
 
 ############# model #####################
@@ -33,7 +45,7 @@ net = BiDateNet(n_channels=12, n_classes=1)
 net = net.to(device)
 criterion = nn.BCEWithLogitsLoss()
 optimizer = optim.SGD(net.parameters(), lr=0.001, momentum=0.9)
-#m = nn.Sigmoid()
+# m = nn.Sigmoid()
 
 
 # for epoch in range(num_epochs):  # loop over the dataset multiple times
@@ -57,68 +69,73 @@ optimizer = optim.SGD(net.parameters(), lr=0.001, momentum=0.9)
 #         if i % 2000 == 1999:    # print every 2000 mini-batches
 #             print(f'[{epoch + 1}, {i + 1:5d}] loss: {running_loss / 2000:.3f}')
 #             running_loss = 0.0
-            
-#         # validation 
+
+#         # validation
 
 # print('Finished Training')
 # PATH = './chabud_net.pth'
 # torch.save(net.state_dict(), PATH)
 
+
 def train_one_epoch(epoch_index, tb_writer):
-    running_loss = 0.
-    last_loss = 0.
-    running_score = 0.
-    last_score = 0.
+    running_loss = 0.0
+    last_loss = 0.0
+    running_score = 0.0
+    last_score = 0.0
 
     for i, data in enumerate(train_loader):
         # get the inputs; data is a list of [inputs, labels]
-        inputs_pre, inputs_post, mask = data[0].to(device), data[1].to(device), data[2].to(device)
-        
+        inputs_pre, inputs_post, mask = (
+            data[0].to(device),
+            data[1].to(device),
+            data[2].to(device),
+        )
+
         # zero the parameter gradients
         optimizer.zero_grad()
-        outputs = net(inputs_pre,inputs_post)
-        #outputs = torch.squeeze(outputs)
-        mask = torch.unsqueeze(mask,1)
+        outputs = net(inputs_pre, inputs_post)
+        # outputs = torch.squeeze(outputs)
+        mask = torch.unsqueeze(mask, 1)
         loss = criterion(outputs, mask.float())
-        
+
         outputs = torch.sigmoid(outputs)
         # outputs[outputs>=0.5] = 1
-        #outputs[outputs<0.5] = 0
+        # outputs[outputs<0.5] = 0
         score = dice(outputs, mask.long())
         loss.backward()
         optimizer.step()
-       
+
         running_loss += loss.item()
         running_score += score.item()
-        
+
         if i % 10 == 9:
-            last_loss = running_loss / 10 # loss per batch
-            last_score = running_score / 10 #score per batch
-            print('  batch {} loss: {}'.format(i + 1, last_loss))
-            print('  batch {} score: {}'.format(i + 1, last_score))
+            last_loss = running_loss / 10  # loss per batch
+            last_score = running_score / 10  # score per batch
+            print("  batch {} loss: {}".format(i + 1, last_loss))
+            print("  batch {} score: {}".format(i + 1, last_score))
             tb_x = epoch_index * len(train_loader) + i + 1
-            tb_writer.add_scalar('Loss/train', last_loss, tb_x)
-            tb_writer.add_scalar('Loss/score', last_score, tb_x)
-            running_loss = 0.
-            running_score = 0.
+            tb_writer.add_scalar("Loss/train", last_loss, tb_x)
+            tb_writer.add_scalar("Loss/score", last_score, tb_x)
+            running_loss = 0.0
+            running_score = 0.0
 
     return last_loss, last_score
 
-timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-writer = SummaryWriter('runs/chabud_trainer_{}'.format(timestamp))
+
+timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+writer = SummaryWriter("runs/chabud_trainer_{}".format(timestamp))
 epoch_number = 0
 
 EPOCHS = 20
 
-best_vloss = 1_000_000.
+best_vloss = 1_000_000.0
 
 for epoch in range(EPOCHS):
-    print('EPOCH {}:'.format(epoch_number + 1))
+    print("EPOCH {}:".format(epoch_number + 1))
 
     # Make sure gradient tracking is on, and do a pass over the data
     net.train(True)
     avg_loss, avg_score = train_one_epoch(epoch_number, writer)
-
 
     running_vloss = 0.0
     running_vscore = 0.0
@@ -127,12 +144,16 @@ for epoch in range(EPOCHS):
     # Disable gradient computation and reduce memory consumption.
     with torch.no_grad():
         for i, vdata in enumerate(val_loader):
-            vinputs_pre,v_inputs_post, vmask = vdata[0].to(device),vdata[1].to(device), vdata[2].to(device)
-            voutputs = net(vinputs_pre,v_inputs_post)
-            vmask = torch.unsqueeze(vmask,1)
+            vinputs_pre, v_inputs_post, vmask = (
+                vdata[0].to(device),
+                vdata[1].to(device),
+                vdata[2].to(device),
+            )
+            voutputs = net(vinputs_pre, v_inputs_post)
+            vmask = torch.unsqueeze(vmask, 1)
             vloss = criterion(voutputs, vmask.float())
             running_vloss += vloss
-            
+
             voutputs = torch.sigmoid(voutputs)
             # voutputs[voutputs>=0.5] = 1
             # voutputs[voutputs<0.5] = 0
@@ -140,20 +161,25 @@ for epoch in range(EPOCHS):
 
     avg_vloss = running_vloss / (i + 1)
     avg_vscore = running_vscore / (i + 1)
-    print('LOSS train {} valid {}'.format(avg_loss, avg_vloss))
-    print('score train {} valid {}'.format(avg_score, avg_vscore))
+    print("LOSS train {} valid {}".format(avg_loss, avg_vloss))
+    print("score train {} valid {}".format(avg_score, avg_vscore))
 
     # Log the running loss averaged per batch
     # for both training and validation
-    writer.add_scalars('Training vs. Validation Loss',
-                    { 'Training' : avg_loss, 'Validation' : avg_vloss,  },
-                    epoch_number + 1)
+    writer.add_scalars(
+        "Training vs. Validation Loss",
+        {
+            "Training": avg_loss,
+            "Validation": avg_vloss,
+        },
+        epoch_number + 1,
+    )
     writer.flush()
 
     # Track best performance, and save the model's state
     if avg_vloss < best_vloss:
         best_vloss = avg_vloss
-        model_path = 'model_{}_{}'.format(timestamp, epoch_number)
+        model_path = "model_{}_{}".format(timestamp, epoch_number)
         torch.save(net.state_dict(), model_path)
 
     epoch_number += 1
