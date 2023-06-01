@@ -9,10 +9,9 @@ from torch.utils.data import DataLoader
 from torch.utils.tensorboard import SummaryWriter
 from torchmetrics.functional import dice
 
-from utils.chabud_dataloader import ChabudDataset, Rescale_train, Rescale_target
 from models.bidate_model import BiDateNet
-
-from args import parse_args
+from utils.chabud_dataloader import ChabudDataset, Rescale_train, Rescale_target
+from utils.args import parse_args
 
 
 def train_one_epoch(epoch_index, tb_writer):
