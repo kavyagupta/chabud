@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 
-from unet_parts import down, outconv, up, inconv
+from .unet_parts import down, outconv, up, inconv
 
 
 class BiDateNet(nn.Module):
