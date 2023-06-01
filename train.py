@@ -142,7 +142,7 @@ def main():
         net.train(True)
         avg_loss, avg_score = train_one_epoch(train_loader=train_loader, net=net, 
                                                 criterion=criterion, optimizer=optimizer,
-                                                epoch_number=epoch_number, tb_writer=writer, 
+                                                epoch_index=epoch_number, tb_writer=writer, 
                                                 device=device)
 
         
