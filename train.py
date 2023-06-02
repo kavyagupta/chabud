@@ -108,13 +108,12 @@ def main():
                                                 criterion=criterion, optimizer=optimizer,
                                                 device=device)
 
-        
+        print("Train loss {} dice {}".format(avg_loss, avg_score))
         
         avg_vloss, avg_vscore = val(val_loader=val_loader, net=net, 
                                      criterion=criterion, device=device)
         
-        print("LOSS train {} valid {}".format(avg_loss, avg_vloss))
-        print("score train {} valid {}".format(avg_score, avg_vscore))
+        print("Val loss {} dice {}".format(avg_vloss, avg_vscore))
 
         # Track best performance, and save the model's state
         if avg_vloss < best_vloss:
