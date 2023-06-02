@@ -31,7 +31,7 @@ class ChabudDataset(data.Dataset):
         f = open(json_path)
         data = json.load(f)
         img_pre = rio.open(data["images"][0]["file_name"]).read()
-        img_post = rio.open(data["images"][0]["file_name"]).read()
+        img_post = rio.open(data["images"][1]["file_name"]).read()
         mask_string = data["properties"][0]["labels"][0]
         img_mask = np.array(Image.open(io.BytesIO(base64.b64decode(mask_string))))
         if self.transform:
