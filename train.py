@@ -29,7 +29,7 @@ def train_one_epoch(train_loader, net, criterion,
         mask = torch.unsqueeze(mask, 1)
         loss = criterion(outputs, mask.float())
 
-        print (outputs.min(), outputs.max())
+        print (mask.min(), mask.max())
         outputs = torch.sigmoid(outputs)
         print (outputs.min(), outputs.max())
         score = dice(outputs, mask.long())
