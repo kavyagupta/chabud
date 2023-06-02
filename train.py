@@ -83,8 +83,8 @@ def main():
         window=512
     )
 
-    train_loader = DataLoader(chabud_train, batch_size=4, shuffle=True)
-    val_loader = DataLoader(chabud_val, batch_size=4, shuffle=False)
+    train_loader = DataLoader(chabud_train, batch_size=8, shuffle=True)
+    val_loader = DataLoader(chabud_val, batch_size=8, shuffle=False)
 
 
     ############# model #####################
