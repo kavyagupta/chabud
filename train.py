@@ -26,7 +26,7 @@ def train_one_epoch(train_loader, net, criterion,
         # zero the parameter gradients
         optimizer.zero_grad()
         outputs = net(pre, post)
-        loss = criterion(outputs, mask)
+        loss = criterion(outputs, mask.long())
 
         outputs = torch.argmax(outputs)
         score = dice(outputs, mask)
@@ -49,7 +49,7 @@ def val(val_loader, net, criterion, device):
         pre, post, mask = pre.to(device), post.to(device), mask.to(device)
 
         outputs = net(pre, post)
-        loss = criterion(outputs, mask)
+        loss = criterion(outputs, mask.long())
 
         outputs = torch.argmax(outputs)
         score = dice(outputs, mask)
