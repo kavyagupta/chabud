@@ -26,13 +26,10 @@ def train_one_epoch(train_loader, net, criterion,
         # zero the parameter gradients
         optimizer.zero_grad()
         outputs = net(pre, post)
-        mask = torch.unsqueeze(mask, 1)
-        loss = criterion(outputs, mask.float())
+        loss = criterion(outputs, mask)
 
-        print (mask.min(), mask.max())
-        outputs = torch.sigmoid(outputs)
-        print (outputs.min(), outputs.max())
-        score = dice(outputs, mask.long())
+        outputs = torch.argmax(outputs)
+        score = dice(outputs, mask)
         loss.backward()
         optimizer.step()
 
@@ -52,11 +49,10 @@ def val(val_loader, net, criterion, device):
         pre, post, mask = pre.to(device), post.to(device), mask.to(device)
 
         outputs = net(pre, post)
-        mask = torch.unsqueeze(mask, 1)
-        loss = criterion(outputs, mask.float())
+        loss = criterion(outputs, mask)
 
-        outputs = torch.sigmoid(outputs)
-        score = dice(outputs, mask.long())
+        outputs = torch.argmax(outputs)
+        score = dice(outputs, mask)
         
         running_loss += loss.item()
         running_score += score.item()
@@ -92,9 +88,9 @@ def main():
 
 
     ############# model #####################
-    net = BiDateNet(n_channels=12, n_classes=1)
+    net = BiDateNet(n_channels=12, n_classes=2)
     net = net.to(device)
-    criterion = nn.BCEWithLogitsLoss()
+    criterion = nn.CrossEntropyLoss()
     optimizer = optim.SGD(net.parameters(), lr=0.1, momentum=0.9)
 
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
