@@ -101,7 +101,7 @@ def main():
     best_vloss = 1_000_000.0
 
     for epoch in range(EPOCHS):
-        print("EPOCH {}:".format(epoch_number + 1))
+        print("EPOCH {}:".format(epoch + 1))
 
         # Make sure gradient tracking is on, and do a pass over the data
         net.train(True)
@@ -120,11 +120,8 @@ def main():
         # Track best performance, and save the model's state
         if avg_vloss < best_vloss:
             best_vloss = avg_vloss
-            model_path = "model_{}_{}".format(timestamp, epoch_number)
+            model_path = "model_{}_{}".format(timestamp, epoch)
             torch.save(net.state_dict(), model_path)
-
-        epoch_number += 1
-
 
 if __name__ == "__main__":
     main()
