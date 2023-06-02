@@ -9,6 +9,8 @@ import torch.nn.functional as F
 from torch.utils.data import DataLoader
 from torchmetrics.functional import dice
 
+from engine import Engine
+
 from models.bidate_model import BiDateNet
 from utils.chabud_dataloader import ChabudDataset
 from utils.args import parse_args
@@ -62,6 +64,10 @@ def val(val_loader, net, criterion, device):
 
 
 def main():
+    fin = open("engine_config.json")
+    metadata = json.load(fin)
+    fin.close()
+    engine = Engine(**metadata)
 
     device = torch.device("cuda:0")
     ########Dataloaders #################
@@ -113,6 +119,9 @@ def main():
                                      criterion=criterion, device=device)
         
         print("Val loss {} dice {}".format(avg_vloss, avg_vscore))
+
+        engine.log(train_loss=avg_loss, train_score=avg_score,
+                   val_loss=avg_vloss, val_score=avg_vscore)
 
         # Track best performance, and save the model's state
         if avg_vloss < best_vloss:

@@ -1,0 +1,9 @@
+{   "description": "Binary image segmentation task on forest fires monitored over California.",
+    "exportId": "646e22219524184c572dbcce",
+    "exportName": "Original Split",
+    "org": "granular",
+    "projectId": "646d44529524184c572daa46",
+    "projectName": "CHABUD",
+    "tags": [   "Fire", "Disaster", "Imported", "Label", "changeDetection", "file", "segment",
+                "variable"]
+}
