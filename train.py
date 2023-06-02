@@ -29,7 +29,6 @@ def train_one_epoch(train_loader, net, criterion,
         loss = criterion(outputs, mask.long())
 
         outputs = torch.argmax(outputs, axis=1)
-        print (outputs.shape, mask.shape)
         score = dice(outputs, mask)
         loss.backward()
         optimizer.step()
@@ -52,7 +51,7 @@ def val(val_loader, net, criterion, device):
         outputs = net(pre, post)
         loss = criterion(outputs, mask.long())
 
-        outputs = torch.argmax(outputs)
+        outputs = torch.argmax(outputs, axis=1)
         score = dice(outputs, mask)
         
         running_loss += loss.item()
