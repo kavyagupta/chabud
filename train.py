@@ -26,6 +26,7 @@ def train_one_epoch(train_loader, net, criterion,
         # zero the parameter gradients
         optimizer.zero_grad()
         outputs = net(pre, post)
+        print (outputs.shape, mask.shape)
         loss = criterion(outputs, mask.long())
 
         outputs = torch.argmax(outputs)
