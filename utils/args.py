@@ -6,7 +6,7 @@ def parse_args():
 
     # primary
     parser.add_argument(
-        "--config-path", type=str, default=None, help="config path",
+        "--config-path", type=str, require=True, help="config path",
     )
     parser.add_argument(
         "--data-root",
@@ -23,7 +23,7 @@ def parse_args():
 
 
     # Model
-    parser.add_argument("--arch", type=str, help="Model achitecture")
+    parser.add_argument("--arch", required=True, type=str, help="Model achitecture")
     
     # Data
     
