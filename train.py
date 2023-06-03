@@ -67,7 +67,7 @@ def val(val_loader, net, criterion, device):
         running_score += score.item()
         running_iou += iou.item()
 
-    return running_loss / len(val_loader), running_score / len(val_loader), running_iou / len(train_loader)
+    return running_loss / len(val_loader), running_score / len(val_loader), running_iou / len(val_loader)
 
 
 
