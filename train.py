@@ -9,6 +9,7 @@ import torch.optim as optim
 import torch.nn.functional as F
 from torch.utils.data import DataLoader
 from torchmetrics.functional import dice
+from torchmetrics.functional.classification import multiclass_jaccard_index
 
 from engine import Engine
 
@@ -21,6 +22,7 @@ def train_one_epoch(train_loader, net, criterion,
                     optimizer, device):
     running_loss = 0.0
     running_score = 0.0
+    running_iou = 0.0
 
     for pre, post, mask in tqdm(train_loader):
         # get the inputs; data is a list of [inputs, labels]
@@ -33,19 +35,22 @@ def train_one_epoch(train_loader, net, criterion,
 
         outputs = torch.argmax(outputs, axis=1)
         score = dice(outputs, mask)
+        iou = multiclass_jaccard_index(outputs, mask, num_classes=2)
         loss.backward()
         optimizer.step()
 
         running_loss += loss.item()
         running_score += score.item()
+        running_iou += iou.item()
 
-    return running_loss / len(train_loader), running_score / len(train_loader)
+    return running_loss / len(train_loader), running_score / len(train_loader), running_iou / len(train_loader)
 
 def val(val_loader, net, criterion, device):
     net.eval()
 
     running_loss = 0.0
     running_score = 0.0
+    running_iou = 0.0
 
     for pre, post, mask in tqdm(val_loader):
         # get the inputs; data is a list of [inputs, labels]
@@ -53,14 +58,16 @@ def val(val_loader, net, criterion, device):
 
         outputs = net(pre, post)
         loss = criterion(outputs, mask.long())
-
+     
         outputs = torch.argmax(outputs, axis=1)
         score = dice(outputs, mask)
+        iou = multiclass_jaccard_index(outputs, mask, num_classes=2)
         
         running_loss += loss.item()
         running_score += score.item()
+        running_iou += iou.item()
 
-    return running_loss / len(val_loader), running_score / len(val_loader)
+    return running_loss / len(val_loader), running_score / len(val_loader), running_iou / len(train_loader)
 
 
 
@@ -127,19 +134,19 @@ def main():
 
         # Make sure gradient tracking is on, and do a pass over the data
         net.train(True)
-        avg_loss, avg_score = train_one_epoch(train_loader=train_loader, net=net, 
+        avg_loss, avg_score, avg_iou = train_one_epoch(train_loader=train_loader, net=net, 
                                                 criterion=criterion, optimizer=optimizer,
                                                 device=device)
 
-        print("Train loss {} dice {}".format(avg_loss, avg_score))
+        print("Train loss {} dice {} iou {}".format(avg_loss, avg_score, avg_iou))
         
-        avg_vloss, avg_vscore = val(val_loader=val_loader, net=net, 
+        avg_vloss, avg_vscore, avg_viou = val(val_loader=val_loader, net=net, 
                                      criterion=criterion, device=device)
         
-        print("Val loss {} dice {}".format(avg_vloss, avg_vscore))
+        print("Val loss {} dice {} iou {}".format(avg_vloss, avg_vscore, avg_viou))
 
-        engine.log(step=epoch, train_loss=avg_loss, train_score=avg_score,
-                   val_loss=avg_vloss, val_score=avg_vscore)
+        engine.log(step=epoch, train_loss=avg_loss, train_score=avg_score, train_iou=avg_iou
+                   val_loss=avg_vloss, val_score=avg_vscore, val_iou=avg_viou)
 
         # Track best performance, and save the model's state
         if avg_vscore > best_vscore:
