@@ -120,7 +120,7 @@ def main():
         
         print("Val loss {} dice {}".format(avg_vloss, avg_vscore))
 
-        engine.log(train_loss=avg_loss, train_score=avg_score,
+        engine.log(step=epoch, train_loss=avg_loss, train_score=avg_score,
                    val_loss=avg_vloss, val_score=avg_vscore)
 
         # Track best performance, and save the model's state
