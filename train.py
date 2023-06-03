@@ -72,20 +72,23 @@ def main():
 
     device = torch.device("cuda:0")
     ########Dataloaders #################
-    json_dir = "../CHABUD/vectors/Original_Split-20230524T135331/MASK"
-    f = open(f"{json_dir}/metadata.json")
+    data_root = "data"
+    vector_dir = f"vectors/Original_Split-20230524T135331/MASK"
+    f = open(f"{data_root}/{vector_dir}/metadata.json")
     data = json.load(f)
     train_list = data["dataset"]["train"]
     val_list = data["dataset"]["val"]
 
     chabud_train = ChabudDataset(
-        json_dir=json_dir[:2],
+        data_root=data_root,
+        json_dir=vector_dir[:2],
         data_list=train_list,
         window=512
     )
 
     chabud_val = ChabudDataset(
-        json_dir=json_dir[:2],
+        data_root=data_root,
+        json_dir=vector_dir[:2],
         data_list=val_list,
         window=512
     )

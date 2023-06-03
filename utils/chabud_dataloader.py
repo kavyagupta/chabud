@@ -13,7 +13,8 @@ import torch.utils.data as data
 
 
 class ChabudDataset(data.Dataset):
-    def __init__(self, json_dir, data_list, window=512):
+    def __init__(self, data_root, json_dir, data_list, window=512):
+        self.data_root = data_root
         self.json_dir = json_dir
         self.data_list = data_list
         self.window = (window, window)
@@ -22,12 +23,15 @@ class ChabudDataset(data.Dataset):
         return len(self.data_list)
 
     def __getitem__(self, idx):
-        fin = open(os.path.join(self.json_dir, self.data_list[idx]))
+        fin = open(os.path.join(self.data_root, self.json_dir, 
+                                self.data_list[idx]))
         data = json.load(fin)
         fin.close()
 
-        img_pre = rio.open(data["images"][0]["file_name"]).read()
-        img_post = rio.open(data["images"][1]["file_name"]).read()
+        img_pre = rio.open(os.path.join(self.data_root,
+                                        data["images"][0]["file_name"])).read()
+        img_post = rio.open(os.path.join(self.data_root,
+                                         data["images"][1]["file_name"]).read()
         mask_string = data["properties"][0]["labels"][0]
         img_mask = np.array(Image.open(io.BytesIO(base64.b64decode(mask_string))))
         
