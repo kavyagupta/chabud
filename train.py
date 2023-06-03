@@ -79,13 +79,13 @@ def main():
     val_list = data["dataset"]["val"]
 
     chabud_train = ChabudDataset(
-        json_dir=json_dir,
+        json_dir=json_dir[:2],
         data_list=train_list,
         window=512
     )
 
     chabud_val = ChabudDataset(
-        json_dir=json_dir,
+        json_dir=json_dir[:2],
         data_list=val_list,
         window=512
     )
@@ -141,7 +141,7 @@ def main():
                 remove_ckpt = track_ckpts.pop(0)
                 os.remove(remove_ckpt)
                 print ("Checkpoint {remove_ckpt} removed")
-                
+
             dst_path = engine.meta['experimentUrl']
             os.system(f"gsutil -m rsync -r -d {ckpt_path}/ {dst_path} 2> /dev/null")
 
