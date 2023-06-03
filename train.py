@@ -76,19 +76,19 @@ def main():
     vector_dir = f"vectors/Original_Split-20230524T135331/MASK"
     f = open(f"{data_root}/{vector_dir}/metadata.json")
     data = json.load(f)
-    train_list = data["dataset"]["train"]
-    val_list = data["dataset"]["val"]
+    train_list = data["dataset"]["train"][:2]
+    val_list = data["dataset"]["val"][:2]
 
     chabud_train = ChabudDataset(
         data_root=data_root,
-        json_dir=vector_dir[:2],
+        json_dir=vector_dir,
         data_list=train_list,
         window=512
     )
 
     chabud_val = ChabudDataset(
         data_root=data_root,
-        json_dir=vector_dir[:2],
+        json_dir=vector_dir,
         data_list=val_list,
         window=512
     )
