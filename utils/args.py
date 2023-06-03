@@ -6,16 +6,17 @@ def parse_args():
 
     # primary
     parser.add_argument(
-        "--configs", type=str, default=None, help="configs file",
+        "--config-path", type=str, default=None, help="config path",
     )
     parser.add_argument(
-        "--result-dir",
-        default="./trained_models",
+        "--data-root",
+        default="./data",
         type=str,
         help="directory to save results",
     )
     parser.add_argument(
-        "--exp-name",
+        "--vector-dir",
+        default="vectors/Original_Split-20230524T135331/MASK",
         type=str,
         help="Name of the experiment (creates dir with this name in --result-dir)",
     )
@@ -23,13 +24,7 @@ def parse_args():
 
     # Model
     parser.add_argument("--arch", type=str, help="Model achitecture")
-    parser.add_argument(
-        "--num-classes",
-        type=int,
-        default=1,
-        help="Number of output classes in the model",
-    )
-
+    
     # Data
     
     parser.add_argument(
@@ -45,71 +40,18 @@ def parse_args():
         default=2,
         metavar="N",
     )
-    parser.add_argument(
-        "--test-batch-size",
-        type=int,
-        default=128,
-        metavar="N",
-        help="input batch size for testing (default: 128)",
-    )
     
     parser.add_argument(
-        "--data-dir", type=str, default="./data", help="path to datasets"
-    )
-
-    parser.add_argument(
-        "--image-dim", type=int, default=32, help="Image size: dim x dim x 3"
+        "--window", type=int, default=512, help="Image size: dim x dim x 3"
     )
 
     # Training
     parser.add_argument(
         "--epochs", type=int, default=100, metavar="N", help="number of epochs to train"
     )
-    parser.add_argument(
-        "--optimizer", type=str, default="sgd", choices=("sgd", "adam", "rmsprop")
-    )
-    parser.add_argument("--wd", default=5e-4, type=float, help="Weight decay")
 
     parser.add_argument("--lr", type=float, default=0.1, help="learning rate")
    
     parser.add_argument("--momentum", type=float, default=0.9, help="SGD momentum")
     
-
-    # Evaluate
-    parser.add_argument(
-        "--evaluate", action="store_true", help="Evaluate model"
-    )
-
-    parser.add_argument(
-        "--val-method",
-        type=str,
-        default="base",
-        choices=["base"],
-        help="base: evaluation on unmodified inputs",
-    )
-
-    # Restart
-    parser.add_argument(
-        "--resume",
-        type=str,
-        default="",
-        help="path to latest checkpoint (default:None)",
-    )
-
-    # Additional
-    parser.add_argument("--seed", type=int, default=1234, help="random seed")
-    parser.add_argument(
-        "--print-freq",
-        type=int,
-        default=10,
-        help="Number of batches to wait before printing training logs",
-    )
-
-
-    parser.add_argument(
-        "--accelerate",
-        action="store_true",
-        help="Use PFTT to accelerate",
-    )
-
     return parser.parse_args()

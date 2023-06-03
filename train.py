@@ -65,56 +65,59 @@ def val(val_loader, net, criterion, device):
 
 
 def main():
-    fin = open("engine_config.json")
+    args = parse_args()
+
+    fin = open(args.config_path)
     metadata = json.load(fin)
     fin.close()
     engine = Engine(**metadata)
 
     device = torch.device("cuda:0")
     ########Dataloaders #################
-    data_root = "data"
-    vector_dir = f"vectors/Original_Split-20230524T135331/MASK"
-    f = open(f"{data_root}/{vector_dir}/metadata.json")
+    
+    f = open(f"{args.data_root}/{args.vector_dir}/metadata.json")
     data = json.load(f)
-    train_list = data["dataset"]["train"][:2]
-    val_list = data["dataset"]["val"][:2]
+    train_list = data["dataset"]["train"]
+    val_list = data["dataset"]["val"]
 
     chabud_train = ChabudDataset(
-        data_root=data_root,
-        json_dir=vector_dir,
+        data_root=args.data_root,
+        json_dir=args.vector_dir,
         data_list=train_list,
-        window=512
+        window=args.window
     )
 
     chabud_val = ChabudDataset(
-        data_root=data_root,
-        json_dir=vector_dir,
+        data_root=args.data_root,
+        json_dir=args.vector_dir,
         data_list=val_list,
-        window=512
+        window=args.window
     )
 
-    train_loader = DataLoader(chabud_train, batch_size=4, shuffle=True)
-    val_loader = DataLoader(chabud_val, batch_size=4, shuffle=False)
+    train_loader = DataLoader(chabud_train, batch_size=args.batch_size, 
+                              shuffle=True)
+    val_loader = DataLoader(chabud_val, batch_size=args.batch_size, 
+                            shuffle=False)
     
     keep = 5
     track_ckpts = []
-    ckpt_path = f"checkpoints/BiDate_UNet_{datetime.now()}"
+    ckpt_path = f"checkpoints/{args.arch}_{datetime.utcnow().strftime('%Y%m%dT%H%M%S')}"
     if not os.path.exists(ckpt_path):
         os.makedirs(ckpt_path)
+        fout = open(os.path.join(ckpt_path, "epxeriment_config.json"), "r")
+        json.dump(args.__dict__, fout)
+        fout.close()
 
 
     ############# model #####################
     net = BiDateNet(n_channels=12, n_classes=2)
     net = net.to(device)
     criterion = nn.CrossEntropyLoss()
-    optimizer = optim.SGD(net.parameters(), lr=0.1, momentum=0.9)
-
-    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    EPOCHS = 20
+    optimizer = optim.SGD(net.parameters(), lr=args.lr, momentum=args.momentum)
 
     best_vloss = 1_000_000.0
 
-    for epoch in range(EPOCHS):
+    for epoch in range(args.epochs):
         print("EPOCH {}:".format(epoch + 1))
 
         # Make sure gradient tracking is on, and do a pass over the data
