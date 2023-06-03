@@ -120,7 +120,7 @@ def main():
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.SGD(net.parameters(), lr=args.lr, momentum=args.momentum)
 
-    best_vloss = 1_000_000.0
+    best_vscore = -1
 
     for epoch in range(args.epochs):
         print("EPOCH {}:".format(epoch + 1))
@@ -142,8 +142,8 @@ def main():
                    val_loss=avg_vloss, val_score=avg_vscore)
 
         # Track best performance, and save the model's state
-        if avg_vloss < best_vloss:
-            best_vloss = avg_vloss
+        if avg_vscore > best_vscore:
+            best_vscore = avg_vscore
             model_path = f"{ckpt_path}/epoch_{epoch}.pt" 
             torch.save(net.state_dict(), model_path)
             track_ckpts.append(model_path)
