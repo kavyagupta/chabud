@@ -145,7 +145,7 @@ def main():
         
         print("Val loss {} dice {} iou {}".format(avg_vloss, avg_vscore, avg_viou))
 
-        engine.log(step=epoch, train_loss=avg_loss, train_score=avg_score, train_iou=avg_iou
+        engine.log(step=epoch, train_loss=avg_loss, train_score=avg_score, train_iou=avg_iou,
                    val_loss=avg_vloss, val_score=avg_vscore, val_iou=avg_viou)
 
         # Track best performance, and save the model's state
