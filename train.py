@@ -1,3 +1,4 @@
+import os
 import json
 from tqdm import tqdm
 from datetime import datetime
@@ -91,6 +92,12 @@ def main():
 
     train_loader = DataLoader(chabud_train, batch_size=4, shuffle=True)
     val_loader = DataLoader(chabud_val, batch_size=4, shuffle=False)
+    
+    keep = 5
+    track_ckpts = []
+    ckpt_path = f"checkpoints/BiDate_UNet_{datetime.now()}"
+    if not os.path.exists(ckpt_path):
+        os.makedirs(ckpt_path)
 
 
     ############# model #####################
@@ -126,8 +133,21 @@ def main():
         # Track best performance, and save the model's state
         if avg_vloss < best_vloss:
             best_vloss = avg_vloss
-            model_path = "model_{}_{}".format(timestamp, epoch)
+            model_path = f"{ckpt_path}/epoch_{epoch}.pt" 
             torch.save(net.state_dict(), model_path)
+            track_ckpts.append(model_path)
+
+            if len(track_ckpts) > 5:
+                remove_ckpt = track_ckpts.pop(0)
+                os.remove(remove_ckpt)
+                print ("Checkpoint {remove_ckpt} removed")
+                
+            dst_path = engine.meta['experimentUrl']
+            os.system(f"gsutil -m rsync -r -d {ckpt_path}/ {dst_path} 2> /dev/null")
+
+            engine.log(step=epoch, best=True, checkpoint_path=model_path)
+        
+        engine.done()
 
 if __name__ == "__main__":
     main()
