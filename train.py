@@ -104,13 +104,18 @@ def main():
     ckpt_path = f"checkpoints/{args.arch}_{datetime.utcnow().strftime('%Y%m%dT%H%M%S')}"
     if not os.path.exists(ckpt_path):
         os.makedirs(ckpt_path)
-        fout = open(os.path.join(ckpt_path, "epxeriment_config.json"), "r")
+        fout = open(os.path.join(ckpt_path, "epxeriment_config.json"), "w")
         json.dump(args.__dict__, fout)
         fout.close()
 
 
     ############# model #####################
-    net = BiDateNet(n_channels=12, n_classes=2)
+    if args.arch == "bidate_unet":
+        net = BiDateNet(n_channels=12, n_classes=2)
+    else:
+        print ("Proper architecture name not passed")
+        return 
+    
     net = net.to(device)
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.SGD(net.parameters(), lr=args.lr, momentum=args.momentum)
