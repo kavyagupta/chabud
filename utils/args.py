@@ -6,7 +6,7 @@ def parse_args():
 
     # primary
     parser.add_argument(
-        "--config-path", type=str, require=True, help="config path",
+        "--config-path", type=str, required=True, help="config path",
     )
     parser.add_argument(
         "--data-root",
