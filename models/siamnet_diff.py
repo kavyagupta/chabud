@@ -3,15 +3,14 @@ import torch.nn as nn
 import torch.nn.functional as F
 from torch.nn.modules.padding import ReplicationPad2d
 
+
 class SiamUnet_diff(nn.Module):
     """SiamUnet_diff segmentation network."""
 
-    def __init__(self, input_nbr, label_nbr):
+    def __init__(self, n_channels, n_classes):
         super(SiamUnet_diff, self).__init__()
 
-        self.input_nbr = input_nbr
-
-        self.conv11 = nn.Conv2d(input_nbr, 16, kernel_size=3, padding=1)
+        self.conv11 = nn.Conv2d(n_channels, 16, kernel_size=3, padding=1)
         self.bn11 = nn.BatchNorm2d(16)
         self.do11 = nn.Dropout2d(p=0.2)
         self.conv12 = nn.Conv2d(16, 16, kernel_size=3, padding=1)
@@ -83,9 +82,7 @@ class SiamUnet_diff(nn.Module):
         self.conv12d = nn.ConvTranspose2d(32, 16, kernel_size=3, padding=1)
         self.bn12d = nn.BatchNorm2d(16)
         self.do12d = nn.Dropout2d(p=0.2)
-        self.conv11d = nn.ConvTranspose2d(16, label_nbr, kernel_size=3, padding=1)
-
-        self.sm = nn.LogSoftmax(dim=1)
+        self.conv11d = nn.ConvTranspose2d(16, n_classes, kernel_size=3, padding=1)
 
     def forward(self, x1, x2):
 
@@ -170,4 +167,4 @@ class SiamUnet_diff(nn.Module):
         x12d = self.do12d(F.relu(self.bn12d(self.conv12d(x1d))))
         x11d = self.conv11d(x12d)
 
-        return self.sm(x11d)
+        return x11d
