@@ -23,7 +23,7 @@ def parse_args():
 
 
     # Model
-    parser.add_argument("--arch", required=True, type=str, help="Model achitecture")
+    parser.add_argument("--arch", required=True, type=str, help="Model achitecture (bidate_unet, simaunet_diff)")
     
     # Data
     
