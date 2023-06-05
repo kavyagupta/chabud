@@ -21,6 +21,12 @@ def parse_args():
         help="Name of the experiment (creates dir with this name in --result-dir)",
     )
 
+    parser.add_argument(
+        "--resume",
+        default=None,
+        help="GeoEngine experiment URL to resume an experiment."
+    )
+
 
     # Model
     parser.add_argument("--arch", required=True, type=str, help="Model achitecture (bidate_unet, simaunet_diff)")

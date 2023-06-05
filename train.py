@@ -16,6 +16,7 @@ from engine import Engine
 from models import BiDateNet, SiamUnet_diff
 from utils.chabud_dataloader import ChabudDataset
 from utils.args import parse_args
+from utils.engine_hub import weight_and_experiment
 
 
 def train_one_epoch(train_loader, net, criterion, 
@@ -77,7 +78,9 @@ def main():
     fin = open(args.config_path)
     metadata = json.load(fin)
     fin.close()
-    engine = Engine(**metadata)
+    if args.resume:
+        dst_path, experiment_id = weight_and_experiment(args.resume)
+    engine = Engine(experiment_id=experiment_id, **metadata)
 
     device = torch.device("cuda:0")
     ########Dataloaders #################

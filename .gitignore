@@ -9,3 +9,4 @@ model_*
 checkpoints
 data
 logs
+pretrain
