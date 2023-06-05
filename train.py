@@ -153,6 +153,7 @@ def main():
         
         avg_vloss, avg_vscore, avg_viou = val(val_loader=val_loader, net=net, 
                                      criterion=criterion, device=device)
+        scheduler.step()
         
         print("Val loss {} dice {} iou {}".format(avg_vloss, avg_vscore, avg_viou))
 
@@ -176,7 +177,7 @@ def main():
 
             engine.log(step=epoch, best=True, checkpoint_path=model_path)
         
-        engine.done()
+    engine.done()
 
 if __name__ == "__main__":
     main()
