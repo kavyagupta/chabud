@@ -59,8 +59,8 @@ def batch_mean_and_sd(loader):
     fst_moment = torch.empty(n_channels)
     snd_moment = torch.empty(n_channels)
 
-    for images, _ in loader:
-        b, c, h, w = images.shape
+    for images_pre, _, _ in loader:
+        b, c, h, w = images_pre.shape
         nb_pixels = b * h * w
         sum_ = torch.sum(images, dim=[0, range(2,13)])
         sum_of_square = torch.sum(images ** 2,
@@ -76,7 +76,7 @@ def batch_mean_and_sd(loader):
     return mean, std
 
 
-f = open(f"{'../data'}/{'vectors/Original_Split-20230524T135331/MASK'}/metadata.json")
+f = open(f"{'./data'}/{'vectors/Original_Split-20230524T135331/MASK'}/metadata.json")
 data = json.load(f)
 train_list = data["dataset"]["train"]
 val_list = data["dataset"]["val"]
