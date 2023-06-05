@@ -76,7 +76,7 @@ def batch_mean_and_sd(loader):
     return mean, std
 
 
-f = open(f"{'../data'}/{'vectors/Original_Split-20230524T135331/MASK'}/metadata.json")
+f = open(f"{'./data'}/{'vectors/Original_Split-20230524T135331/MASK'}/metadata.json")
 data = json.load(f)
 train_list = data["dataset"]["train"]
 val_list = data["dataset"]["val"]
