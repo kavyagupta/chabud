@@ -11,6 +11,7 @@ from skimage import transform
 
 import torch.utils.data as data
 from torchvision import transforms
+from torch.utils.data import DataLoader
 
 
 class ChabudDataset(data.Dataset):
