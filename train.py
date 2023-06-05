@@ -6,6 +6,7 @@ from datetime import datetime
 import torch
 import torch.nn as nn
 import torch.optim as optim
+from torch.optim.lr_scheduler import MultiStepLR
 import torch.nn.functional as F
 from torch.utils.data import DataLoader
 from torchmetrics.functional import dice
@@ -128,13 +129,14 @@ def main():
     net = net.to(device)
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.SGD(net.parameters(), lr=args.lr, momentum=args.momentum)
+    scheduler = MultiStepLR(optimizer, milestones=[100, 150, 200], gamma=0.1)
 
     if args.resume:
-        dst_path, experiment_id = weight_and_experiment(args.resume)
+        dst_path, _ = weight_and_experiment(args.resume)
         weight = torch.load(dst_path)
         net.load_state_dict(weight)
-        
-    engine = Engine(experiment_id=experiment_id, **metadata)
+
+    engine = Engine(**metadata)
 
     best_vscore = -1
 
