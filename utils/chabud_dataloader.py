@@ -2,6 +2,7 @@ import os
 import io
 import json
 import base64
+import torch
 
 import cv2
 import numpy as np
@@ -12,6 +13,7 @@ from skimage import transform
 import torch.utils.data as data
 from torchvision import transforms
 from torch.utils.data import DataLoader
+
 
 
 class ChabudDataset(data.Dataset):
