@@ -78,9 +78,6 @@ def main():
     fin = open(args.config_path)
     metadata = json.load(fin)
     fin.close()
-    if args.resume:
-        dst_path, experiment_id = weight_and_experiment(args.resume)
-    engine = Engine(experiment_id=experiment_id, **metadata)
 
     device = torch.device("cuda:0")
     ########Dataloaders #################
@@ -131,6 +128,13 @@ def main():
     net = net.to(device)
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.SGD(net.parameters(), lr=args.lr, momentum=args.momentum)
+
+    if args.resume:
+        dst_path, experiment_id = weight_and_experiment(args.resume)
+        weight = torch.load(dst_path)
+        net.load_state_dict(weight)
+        
+    engine = Engine(experiment_id=experiment_id, **metadata)
 
     best_vscore = -1
 
