@@ -46,4 +46,4 @@ class ChabudDataset(data.Dataset):
         img_post_resize = np.asarray(img_post_resize, dtype=np.float32)
         img_mask = cv2.resize(img_mask, self.window, cv2.INTER_NEAREST)
 
-        return img_pre_resize /1000, img_post_resize /1000, img_mask
+        return img_pre_resize, img_post_resize, img_mask
