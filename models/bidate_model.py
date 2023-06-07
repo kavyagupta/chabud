@@ -32,9 +32,9 @@ class BiDateNet(nn.Module):
         x4_d2 = self.down3(x3_d2)
         x5_d2 = self.down4(x4_d2)
 
-        x = self.up1(torch.relu(x5_d2 + x5_d1), torch.relu(x4_d2 + x4_d1))
-        x = self.up2(x, torch.relu(x3_d2 + x3_d1))
-        x = self.up3(x, torch.relu(x2_d2 + x2_d1))
-        x = self.up4(x, torch.relu(x1_d2 + x1_d1))
+        x = self.up1(torch.relu(x5_d2 * x5_d1), torch.relu(x4_d2 * x4_d1))
+        x = self.up2(x, torch.relu(x3_d2 * x3_d1))
+        x = self.up3(x, torch.relu(x2_d2 * x2_d1))
+        x = self.up4(x, torch.relu(x1_d2 * x1_d1))
         x = self.outc(x)
         return x
