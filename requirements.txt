@@ -2,3 +2,7 @@ torch
 torchvision
 granular-engine
 rasterio
+tqdm
+torchmetrics
+opencv-python
+scikit-image
