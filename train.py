@@ -14,7 +14,7 @@ from torchmetrics.functional.classification import multiclass_jaccard_index
 
 from engine import Engine
 
-from models import BiDateNet, SiamUnet_diff
+from models import BiDateNet, SiamUnet_diff, BiDateConcatNet
 from utils.chabud_dataloader import ChabudDataset
 from utils.args import parse_args
 from utils.engine_hub import weight_and_experiment
@@ -122,6 +122,8 @@ def main():
         net = BiDateNet(n_channels=12, n_classes=2)
     elif args.arch == "siamunet_diff":
         net = SiamUnet_diff(n_channels=12, n_classes=2)
+    elif args.arch == "bidate_concat":
+        net = BiDateConcatNet(n_channels=12, n_classes=2)
     else:
         print ("Proper architecture name not passed")
         return 
