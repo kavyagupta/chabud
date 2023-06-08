@@ -19,6 +19,7 @@ class ChabudDataset(data.Dataset):
         self.json_dir = json_dir
         self.data_list = data_list
         self.window = (window, window)
+        self.transform = transform
 
     def __len__(self):
         return len(self.data_list)
