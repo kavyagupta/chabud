@@ -15,7 +15,7 @@ import albumentations as A
 
 
 class ChabudDataset(data.Dataset):
-    def __init__(self, data_root, json_dir, data_list, window=512,transform = None):
+    def __init__(self, data_root, json_dir, data_list, window=512, transform = None):
         self.data_root = data_root
         self.json_dir = json_dir
         self.data_list = data_list
@@ -40,12 +40,14 @@ class ChabudDataset(data.Dataset):
 
         
         if self.transform:
-            transformed = self.transform(image = img_pre.transpose(2, 1, 0), image1 = img_post.transpose(2, 1, 0), 
+            print("hereee ")
+            transformed = self.transform(image = img_pre.transpose(1, 2, 0), 
+                                         image1 = img_post.transpose(1, 2, 0), 
                                          mask= img_mask)
             img_pre = transformed['image']
-            img_pre = img_pre.transpose(2,1,0)
+            img_pre = img_pre.transpose(2, 0, 1)
             img_post = transformed['image1']
-            img_post = img_post.transpose(2,1,0)
+            img_post = img_post.transpose(2, 0, 1)
             img_mask = transformed['mask']
         
         # img_pre_resize = []
@@ -85,14 +87,16 @@ def get_dataloader(args):
         data_root=args.data_root,
         json_dir=args.vector_dir,
         data_list=train_list,
-        window=args.window, transform = transform_train
+        window=args.window, 
+        transform = transform_train
     )
 
     chabud_val = ChabudDataset(
         data_root=args.data_root,
         json_dir=args.vector_dir,
         data_list=val_list,
-        window=args.window, transform=transform_val
+        window=args.window, 
+        transform=transform_val
     )
 
     train_loader = DataLoader(chabud_train, batch_size=args.batch_size, 
