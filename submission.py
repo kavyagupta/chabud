@@ -22,6 +22,9 @@ def retrieve_validation_fold(path: Union[str, Path]) -> Dict[str, NDArray]:
         for uuid, values in fp.items():
             if values.attrs['fold'] != 0:
                 continue
+
+            if "pre_fire" not in values:
+                continue
             
             result[uuid]['post'] = values['post_fire'][...]
             result[uuid]['pre'] = values['pre_fire'][...]
