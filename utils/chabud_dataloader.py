@@ -44,7 +44,7 @@ class ChabudDataset(data.Dataset):
             img_pre = transformed['image']
             img_pre = img_pre.transpose(2,1,0)
             img_post = transformed['image1']
-            img_post = transformed.transpose(2,1,0)
+            img_post = img_post.transpose(2,1,0)
             img_mask = transformed['mask']
         
         img_pre_resize = []
