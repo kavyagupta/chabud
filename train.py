@@ -110,7 +110,7 @@ def main():
     best_vscore = -1
 
     for epoch in range(args.epochs):
-        print("EPOCH {}:".format(epoch + 1))
+        print("Epoch {epoch}")
 
         # Make sure gradient tracking is on, and do a pass over the data
         net.train(True)
