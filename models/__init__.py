@@ -16,3 +16,5 @@ def get_model(args):
     else:
         print ("Proper architecture name not passed")
         return 
+
+    return net
