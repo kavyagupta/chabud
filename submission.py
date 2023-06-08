@@ -43,7 +43,7 @@ if __name__ == '__main__':
         "--data-path", type=str, required=True, help="data-path")
 
     parser.add_argument(
-        "--model-name", type=str, required=True, help="model arch")
+        "--arch", type=str, required=True, help="model arch")
 
     parser.add_argument(
         "--save-path", type=str, required=True, help="saved csv path")
