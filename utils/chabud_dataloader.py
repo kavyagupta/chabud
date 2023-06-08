@@ -48,16 +48,6 @@ class ChabudDataset(data.Dataset):
             img_post = transformed['post']
             img_post = img_post.transpose(2, 0, 1)
             img_mask = transformed['mask']
-        
-        # img_pre_resize = []
-        # img_post_resize = []
-        # for i in range(img_pre.shape[0]):
-        #     img_pre_resize.append(cv2.resize(img_pre[i], self.window))
-        #     img_post_resize.append(cv2.resize(img_post[i], self.window))
-        
-        # img_pre_resize = np.asarray(img_pre_resize, dtype=np.float32)
-        # img_post_resize = np.asarray(img_post_resize, dtype=np.float32)
-        # img_mask = cv2.resize(img_mask, self.window, cv2.INTER_NEAREST)
 
         return img_pre.astype(np.float32), img_post.astype(np.float32), img_mask
 
