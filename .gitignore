@@ -10,3 +10,4 @@ checkpoints
 data
 logs
 pretrain
+predictions
