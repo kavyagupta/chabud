@@ -7,3 +7,4 @@ torchmetrics
 opencv-python
 scikit-image
 pandas
+h5py
