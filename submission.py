@@ -26,8 +26,8 @@ def retrieve_validation_fold(path: Union[str, Path]) -> Dict[str, NDArray]:
             if "pre_fire" not in values:
                 continue
             
-            result[uuid]['post'] = values['post_fire'][...]
-            result[uuid]['pre'] = values['pre_fire'][...]
+            result[uuid]['post'] = values['post_fire'][...].astype(np.float32)
+            result[uuid]['pre'] = values['pre_fire'][...].astype(np.float32)
 
     return dict(result)
 
