@@ -8,16 +8,14 @@ import torch.nn as nn
 import torch.optim as optim
 from torch.optim.lr_scheduler import MultiStepLR
 import torch.nn.functional as F
-from torch.utils.data import DataLoader
+
 from torchmetrics.functional import dice
 from torchmetrics.functional.classification import multiclass_jaccard_index
-
-import albumentations as A
 
 from engine import Engine
 
 from models import get_model
-from utils.chabud_dataloader import ChabudDataset
+from utils.chabud_dataloader import get_dataloader
 from utils.args import parse_args
 from utils.engine_hub import weight_and_experiment
 
@@ -84,36 +82,8 @@ def main():
 
     device = torch.device("cuda:0")
     ########Dataloaders #################
-    
-    f = open(f"{args.data_root}/{args.vector_dir}/metadata.json")
-    data = json.load(f)
-    train_list = data["dataset"]["train"]
-    val_list = data["dataset"]["val"]
+    train_loader, val_loader = get_dataloader(args)
 
-    transform = A.Compose([A.Resize(256, 256),A.RandomCrop(width=224, height=224),
-                                A.HorizontalFlip(p=0.5),
-                                A.RandomBrightnessContrast(p=0.2),
-                              ])
-
-    chabud_train = ChabudDataset(
-        data_root=args.data_root,
-        json_dir=args.vector_dir,
-        data_list=train_list,
-        window=args.window, transform = transform
-    )
-
-    chabud_val = ChabudDataset(
-        data_root=args.data_root,
-        json_dir=args.vector_dir,
-        data_list=val_list,
-        window=args.window
-    )
-
-    train_loader = DataLoader(chabud_train, batch_size=args.batch_size, 
-                              shuffle=True)
-    val_loader = DataLoader(chabud_val, batch_size=args.batch_size, 
-                            shuffle=False)
-    
     keep = 5
     track_ckpts = []
     ckpt_path = f"checkpoints/{args.arch}_{datetime.utcnow().strftime('%Y%m%dT%H%M%S')}"
