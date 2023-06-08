@@ -83,4 +83,4 @@ if __name__ == '__main__':
 
     # concatenate all dataframes
     submission_df = pd.concat(result)
-    submission_df.to_csv(f'"predictions/{args.csv_name}.csv', index=False)
+    submission_df.to_csv(f'predictions/{args.csv_name}.csv', index=False)
