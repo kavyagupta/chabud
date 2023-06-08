@@ -90,7 +90,7 @@ def main():
     train_list = data["dataset"]["train"]
     val_list = data["dataset"]["val"]
 
-    transform = A.Compose([A.RandomCrop(width=256, height=256),
+    transform = A.Compose([A.Resize(256, 256),A.RandomCrop(width=224, height=224),
                                 A.HorizontalFlip(p=0.5),
                                 A.RandomBrightnessContrast(p=0.2),
                               ])

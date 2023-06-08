@@ -36,16 +36,7 @@ class ChabudDataset(data.Dataset):
                                          data["images"][1]["file_name"])).read()
         mask_string = data["properties"][0]["labels"][0]
         img_mask = np.array(Image.open(io.BytesIO(base64.b64decode(mask_string))))
-        
-        img_pre_resize = []
-        img_post_resize = []
-        for i in range(img_pre.shape[0]):
-            img_pre_resize.append(cv2.resize(img_pre[i], self.window))
-            img_post_resize.append(cv2.resize(img_post[i], self.window))
-        
-        img_pre_resize = np.asarray(img_pre_resize, dtype=np.float32)
-        img_post_resize = np.asarray(img_post_resize, dtype=np.float32)
-        img_mask = cv2.resize(img_mask, self.window, cv2.INTER_NEAREST)
+
         
         if self.transform:
             transformed = self.transform(image = img_pre.transpose(2, 1, 0), image1 = img_post.transpose(2, 1, 0), 
@@ -56,6 +47,14 @@ class ChabudDataset(data.Dataset):
             img_post = img_post.transpose(2,1,0)
             img_mask = transformed['mask']
         
+        img_pre_resize = []
+        img_post_resize = []
+        for i in range(img_pre.shape[0]):
+            img_pre_resize.append(cv2.resize(img_pre[i], self.window))
+            img_post_resize.append(cv2.resize(img_post[i], self.window))
         
+        img_pre_resize = np.asarray(img_pre_resize, dtype=np.float32)
+        img_post_resize = np.asarray(img_post_resize, dtype=np.float32)
+        img_mask = cv2.resize(img_mask, self.window, cv2.INTER_NEAREST)
 
         return img_pre_resize, img_post_resize, img_mask
