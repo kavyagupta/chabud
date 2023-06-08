@@ -8,6 +8,8 @@ from collections import defaultdict
 
 import argparse
 
+import torch
+
 from typing import Any, Union, Dict, Literal
 from numpy.typing import NDArray
 
