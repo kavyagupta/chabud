@@ -62,6 +62,7 @@ if __name__ == '__main__':
     result = []
     # instantiate the model
     model = get_model(args)
+    model.to(device)
     weight = torch.load(args.weight_file)
     model.load_state_dict(weight)
     _ = model.eval()
