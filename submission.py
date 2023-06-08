@@ -24,7 +24,7 @@ def retrieve_validation_fold(path: Union[str, Path]) -> Dict[str, NDArray]:
                 continue
             
             result[uuid]['post'] = values['post_fire'][...]
-            # result[uuid]['pre'] = values['pre_fire'][...]
+            result[uuid]['pre'] = values['pre_fire'][...]
 
     return dict(result)
 
@@ -51,6 +51,8 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
+    device = torch.device("cuda:0")
+
     validation_fold = retrieve_validation_fold(args.eval_path)
 
     # use a list to accumulate results
@@ -65,7 +67,9 @@ if __name__ == '__main__':
         input_images = validation_fold[uuid]
 
         # perform the prediction
-        predicted = model(input_images)
+        pre = torch.from_numpy(input_images['pre']).to(device).float()
+        post = torch.from_numpy(input_images['post']).to(device).float()
+        predicted = model(pre, post)
         predicted = torch.argmax(predicted, axis=1)
         predicted = predicted.data.cpu().numpy()
 
