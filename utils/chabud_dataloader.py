@@ -14,7 +14,7 @@ from torchvision import transforms
 
 
 class ChabudDataset(data.Dataset):
-    def __init__(self, data_root, json_dir, data_list, window=512):
+    def __init__(self, data_root, json_dir, data_list, window=512,transform = None):
         self.data_root = data_root
         self.json_dir = json_dir
         self.data_list = data_list
@@ -35,6 +35,13 @@ class ChabudDataset(data.Dataset):
                                          data["images"][1]["file_name"])).read()
         mask_string = data["properties"][0]["labels"][0]
         img_mask = np.array(Image.open(io.BytesIO(base64.b64decode(mask_string))))
+
+        
+        if self.transform:
+            transformed = self.transform(image = img_pre, image1 = img_post, mask= img_mask)
+            img_pre = transformed['img_pre']
+            img_post = transformed['img_post']
+            img_mask = transformed['img_mask']
         
         img_pre_resize = []
         img_post_resize = []

@@ -12,6 +12,8 @@ from torch.utils.data import DataLoader
 from torchmetrics.functional import dice
 from torchmetrics.functional.classification import multiclass_jaccard_index
 
+import albumentations as A
+
 from engine import Engine
 
 from models import get_model
@@ -88,11 +90,16 @@ def main():
     train_list = data["dataset"]["train"]
     val_list = data["dataset"]["val"]
 
+    transform = A.Compose([A.RandomCrop(width=256, height=256),
+                                A.HorizontalFlip(p=0.5),
+                                A.RandomBrightnessContrast(p=0.2),
+                              ])
+
     chabud_train = ChabudDataset(
         data_root=args.data_root,
         json_dir=args.vector_dir,
         data_list=train_list,
-        window=args.window
+        window=args.window, transform = transform
     )
 
     chabud_val = ChabudDataset(
