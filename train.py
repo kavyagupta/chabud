@@ -99,7 +99,7 @@ def main():
         data_root=args.data_root,
         json_dir=args.vector_dir,
         data_list=train_list,
-        window=args.window, transform = transform
+        window=args.window, transform = None
     )
 
     chabud_val = ChabudDataset(
