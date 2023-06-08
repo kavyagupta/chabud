@@ -15,11 +15,10 @@ import albumentations as A
 
 
 class ChabudDataset(data.Dataset):
-    def __init__(self, data_root, json_dir, data_list, window=512, transform = None):
+    def __init__(self, data_root, json_dir, data_list, transform = None):
         self.data_root = data_root
         self.json_dir = json_dir
         self.data_list = data_list
-        self.window = (window, window)
         self.transform = transform
 
     def __len__(self):
@@ -67,18 +66,17 @@ def get_dataloader(args):
                                     A.GridDistortion(p=0.5),
                                     A.OpticalDistortion(distort_limit=1, shift_limit=0.5, p=1),
                                     ], p=0.8),
-                                A.Resize(512, 512)
+                                A.Resize(args.window, args.window)
                               ],
                               additional_targets={'post': 'image'})
     
-    transform_val = A.Compose([A.Resize(512, 512)],
+    transform_val = A.Compose([A.Resize(args.window, args.window)],
                               additional_targets={'post': 'image'})
 
     chabud_train = ChabudDataset(
         data_root=args.data_root,
         json_dir=args.vector_dir,
         data_list=train_list,
-        window=args.window, 
         transform = transform_train
     )
 
@@ -86,7 +84,6 @@ def get_dataloader(args):
         data_root=args.data_root,
         json_dir=args.vector_dir,
         data_list=val_list,
-        window=args.window, 
         transform=transform_val
     )
 
