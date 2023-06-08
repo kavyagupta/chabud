@@ -6,3 +6,4 @@ tqdm
 torchmetrics
 opencv-python
 scikit-image
+pandas
