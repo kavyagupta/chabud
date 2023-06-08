@@ -63,7 +63,7 @@ if __name__ == '__main__':
     # instantiate the model
     model = get_model(args)
     weight = torch.load(args.weight_file)
-    model.load_dict(weight)
+    model.load_state_dict(weight)
     _ = model.eval()
 
     for uuid in validation_fold:
