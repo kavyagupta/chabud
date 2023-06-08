@@ -71,8 +71,8 @@ if __name__ == '__main__':
         input_images = validation_fold[uuid]
 
         # perform the prediction
-        pre = torch.from_numpy(input_images['pre']).to(device).float()
-        post = torch.from_numpy(input_images['post']).to(device).float()
+        pre = torch.from_numpy(input_images['pre']).to(device).float().unsqueeze(0)
+        post = torch.from_numpy(input_images['post']).to(device).float().unsqueeze(0)
         predicted = model(pre, post)
         predicted = torch.argmax(predicted, axis=1)
         predicted = predicted.data.cpu().numpy()
