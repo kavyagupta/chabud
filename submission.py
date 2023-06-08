@@ -46,20 +46,20 @@ if __name__ == '__main__':
         "--arch", type=str, required=True, help="model arch")
 
     parser.add_argument(
-        "--save-path", type=str, required=True, help="saved csv path")
+        "--csv-name", type=str, required=True, help="prediction csv name")
 
 
     args = parser.parse_args()
 
     device = torch.device("cuda:0")
 
-    validation_fold = retrieve_validation_fold(args.eval_path)
+    validation_fold = retrieve_validation_fold(args.data_path)
 
     # use a list to accumulate results
     result = []
     # instantiate the model
     model = get_model(args)
-    weight = torch.load(args.weight_file_path)
+    weight = torch.load(args.weight_file)
     model.load_dict(weight)
     _ = model.eval()
 
@@ -79,4 +79,4 @@ if __name__ == '__main__':
 
     # concatenate all dataframes
     submission_df = pd.concat(result)
-    submission_df.to_csv(f'"predictions/{args.prediction_name}.csv', index=False)
+    submission_df.to_csv(f'"predictions/{args.csv_name}.csv', index=False)
