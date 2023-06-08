@@ -40,13 +40,12 @@ class ChabudDataset(data.Dataset):
 
         
         if self.transform:
-            print("hereee ")
-            transformed = self.transform(image = img_pre.transpose(1, 2, 0), 
-                                         image1 = img_post.transpose(1, 2, 0), 
+            transformed = self.transform(pre = img_pre.transpose(1, 2, 0), 
+                                         post = img_post.transpose(1, 2, 0), 
                                          mask= img_mask)
-            img_pre = transformed['image']
+            img_pre = transformed['pre']
             img_pre = img_pre.transpose(2, 0, 1)
-            img_post = transformed['image1']
+            img_post = transformed['post']
             img_post = img_post.transpose(2, 0, 1)
             img_mask = transformed['mask']
         
@@ -79,9 +78,11 @@ def get_dataloader(args):
                                     A.OpticalDistortion(distort_limit=1, shift_limit=0.5, p=1),
                                     ], p=0.8),
                                 A.Resize(512, 512)
-                              ])
+                              ],
+                              additional_targets={'pre': 'image', 'post': 'image'})
     
-    transform_val = A.Compose([A.Resize(512, 512)])
+    transform_val = A.Compose([A.Resize(512, 512)],
+                              additional_targets={'pre': 'image', 'post': 'image'})
 
     chabud_train = ChabudDataset(
         data_root=args.data_root,
