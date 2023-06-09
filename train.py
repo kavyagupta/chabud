@@ -127,7 +127,7 @@ def main():
         print("Val loss {} dice {} iou {}".format(avg_vloss, avg_vscore, avg_viou))
 
         # Track best performance, and save the model's state
-        if best_viou > avg_viou:
+        if avg_viou >= best_viou:
             best_viou = avg_viou
             model_path = f"{ckpt_path}/epoch_{epoch}.pt" 
             torch.save(net.state_dict(), model_path)
