@@ -28,7 +28,7 @@ def parse_args():
     )
 
     parser.add_argument(
-        "--finetune_from",
+        "--finetune-from",
         default=None, 
         help="Engine epxeriment URL for pretrained weights"
     )
