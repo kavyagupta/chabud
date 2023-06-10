@@ -27,6 +27,12 @@ def parse_args():
         help="GeoEngine experiment URL to resume an experiment."
     )
 
+    parser.add_argument(
+        "--finetune_from",
+        default=None, 
+        help="Engine epxeriment URL for pretrained weights"
+    )
+
 
     # Model
     parser.add_argument("--arch", required=True, type=str, help="Model achitecture (bidate_unet, simaunet_diff)")
