@@ -10,3 +10,4 @@ pandas
 h5py
 trimesh
 albumentations
+mmengine
