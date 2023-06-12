@@ -16,7 +16,7 @@ def parse_args():
     )
     parser.add_argument(
         "--vector-dir",
-        default="vectors/Original_Split-20230524T135331/MASK",
+        required=True,
         type=str,
         help="Name of the experiment (creates dir with this name in --result-dir)",
     )
