@@ -83,6 +83,7 @@ def main():
     fin.close()
 
     device = torch.device("cuda:0")
+    args.device = device
     ########Dataloaders #################
     train_loader, val_loader = get_dataloader(args)
 
