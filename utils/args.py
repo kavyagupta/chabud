@@ -39,6 +39,7 @@ def parse_args():
     parser.add_argument("--loss", requried=True, type=str, help="cross entropy/focal")
     parser.add_argument("--alpha", defaut="0.99,0.01", type=str, help="For focal loss" )
     parser.add_argument("--gamma", defaut=2, type=float, help="For focal loss" )
+    parser.add_argument("--optim", default="sgd", help="optimizer sgd/adam")
     
     # Data
     

@@ -6,7 +6,7 @@ from datetime import datetime
 import torch
 import torch.nn as nn
 import torch.optim as optim
-from torch.optim.lr_scheduler import MultiStepLR
+from torch.optim.lr_scheduler import MultiStepLR, ReduceLROnPlateau
 import torch.nn.functional as F
 
 from torchmetrics.functional import dice
@@ -99,8 +99,13 @@ def main():
     net = net.to(device)
     criterion = get_loss(args)
     
-    optimizer = optim.SGD(net.parameters(), lr=args.lr, momentum=args.momentum)
-    scheduler = MultiStepLR(optimizer, milestones=[100, 150, 200], gamma=0.1)
+    if args.optim == "sgd":
+        optimizer = optim.SGD(net.parameters(), lr=args.lr, momentum=args.momentum)
+        scheduler = MultiStepLR(optimizer, milestones=[100, 150, 200], gamma=0.1)
+    elif args.optim == "adam":
+        optimizer = optim.Adam(net.parameters(), lr=args.lr)
+        scheduler = ReduceLROnPlateau(optimizer, actor=0.1, patience=10, threshold=0.0001)
+    
 
     if args.resume:
         dst_path, _ = weight_and_experiment(args.resume)
