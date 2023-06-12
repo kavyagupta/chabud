@@ -22,7 +22,7 @@ class FocalLoss(nn.Module):
     """
 
     def __init__(self,
-                 alpha: Optional[list] = [0.9901550674438476, 0.009844932556152344],
+                 alpha: Optional[Tensor] = None,
                  gamma: float = 2.,
                  reduction: str = 'mean',
                  ignore_index: int = -100):
@@ -99,7 +99,7 @@ def get_loss(args):
     if args.loss == "ce":
         criterion = nn.CrossEntropyLoss()
     elif args.loss == "focal":
-        args.alpha = list(map(float, args.alpha.split(',')))
+        args.alpha = torch.tensor(list(map(float, args.alpha.split(','))))
         criterion = FocalLoss(args.alpha, args.gamma)
     else:
         print("Loss not found")
