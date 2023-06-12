@@ -68,7 +68,7 @@ class FocalLoss(nn.Module):
         unignored_mask = y != self.ignore_index
         y = y[unignored_mask]
         if len(y) == 0:
-            return torch.tensor(0.)
+            return torch.tensor(0.).type_as(x)
         x = x[unignored_mask]
 
         # compute weighted cross entropy term: -alpha * log(pt)
@@ -99,7 +99,7 @@ def get_loss(args):
     if args.loss == "ce":
         criterion = nn.CrossEntropyLoss()
     elif args.loss == "focal":
-        args.alpha = torch.tensor(list(map(float, args.alpha.split(','))))
+        args.alpha = torch.tensor(list(map(float, args.alpha.split(',')))).to(args.device)
         criterion = FocalLoss(args.alpha, args.gamma)
     else:
         print("Loss not found")
