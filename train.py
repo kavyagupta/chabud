@@ -83,7 +83,6 @@ def main():
     fin.close()
 
     device = torch.device("cuda:0")
-    args.device = device
     ########Dataloaders #################
     train_loader, val_loader = get_dataloader(args)
 
@@ -98,7 +97,7 @@ def main():
 
     net = get_model(args)
     net = net.to(device)
-    criterion = get_loss(args)
+    criterion = get_loss(args, device)
     
     if args.optim == "sgd":
         optimizer = optim.SGD(net.parameters(), lr=args.lr, momentum=args.momentum)

@@ -95,11 +95,11 @@ class FocalLoss(nn.Module):
         return loss
     
 
-def get_loss(args):
+def get_loss(args, device):
     if args.loss == "ce":
         criterion = nn.CrossEntropyLoss()
     elif args.loss == "focal":
-        args.alpha = torch.tensor(list(map(float, args.alpha.split(',')))).to(args.device)
+        args.alpha = torch.tensor(list(map(float, args.alpha.split(',')))).to(device)
         criterion = FocalLoss(args.alpha, args.gamma)
     else:
         print("Loss not found")
