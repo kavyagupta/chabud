@@ -36,6 +36,9 @@ def parse_args():
 
     # Model
     parser.add_argument("--arch", required=True, type=str, help="Model achitecture (bidate_unet, simaunet_diff)")
+    parser.add_argument("--loss", requried=True, type=str, help="cross entropy/focal")
+    parser.add_argument("--alpha", defaut="0.99,0.01", type=str, help="For focal loss" )
+    parser.add_argument("--gamma", defaut=2, type=float, help="For focal loss" )
     
     # Data
     

@@ -12,12 +12,14 @@ import torch.nn.functional as F
 from torchmetrics.functional import dice
 from torchmetrics.functional.classification import multiclass_jaccard_index
 
+
 from engine import Engine
 
 from models import get_model
 from utils.chabud_dataloader import get_dataloader
 from utils.args import parse_args
 from utils.engine_hub import weight_and_experiment
+from utils.loss import get_loss
 
 
 def train_one_epoch(train_loader, net, criterion, 
@@ -94,9 +96,9 @@ def main():
         fout.close()
 
     net = get_model(args)
-    
     net = net.to(device)
-    criterion = nn.CrossEntropyLoss()
+    criterion = get_loss(args)
+    
     optimizer = optim.SGD(net.parameters(), lr=args.lr, momentum=args.momentum)
     scheduler = MultiStepLR(optimizer, milestones=[100, 150, 200], gamma=0.1)
 
