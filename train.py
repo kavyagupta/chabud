@@ -129,7 +129,10 @@ def main():
         
         avg_vloss, avg_vscore, avg_viou = val(val_loader=val_loader, net=net, 
                                      criterion=criterion, device=device)
-        scheduler.step()
+        if args.optim == "sgd":
+            scheduler.step()
+        elif args.optim == "adam":
+            scheduler.step(avg_vloss)
         
         print("Val loss {} dice {} iou {}".format(avg_vloss, avg_vscore, avg_viou))
 
