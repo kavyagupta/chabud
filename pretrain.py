@@ -27,7 +27,7 @@ def train_one_epoch(train_loader, net, criterion,
 
     for pre, post, _ in tqdm(train_loader):
         # get the inputs; data is a list of [inputs, labels]
-        pre, post, _ = pre.to(device), post.to(device)
+        pre, post = pre.to(device), post.to(device)
 
         # zero the parameter gradients
         optimizer.zero_grad()
@@ -49,7 +49,7 @@ def val(val_loader, net, criterion, device):
 
     for pre, post, _ in tqdm(val_loader):
         # get the inputs; data is a list of [inputs, labels]
-        pre, post, mask = pre.to(device), post.to(device) 
+        pre, post = pre.to(device), post.to(device) 
         outputs = net(pre, post)
         mask = pre - post
         loss = criterion(outputs, mask)
