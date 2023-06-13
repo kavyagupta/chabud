@@ -18,60 +18,44 @@ from engine import Engine
 from models import get_model
 from utils.chabud_dataloader import get_dataloader
 from utils.args import parse_args
-from utils.engine_hub import weight_and_experiment
-from utils.loss import get_loss
 
 
 def train_one_epoch(train_loader, net, criterion, 
                     optimizer, device):
     running_loss = 0.0
-    running_score = 0.0
-    running_iou = 0.0
 
-    for pre, post, mask in tqdm(train_loader):
+    for pre, post, _ in tqdm(train_loader):
         # get the inputs; data is a list of [inputs, labels]
-        pre, post, mask = pre.to(device), post.to(device), mask.to(device)
+        pre, post, _ = pre.to(device), post.to(device)
 
         # zero the parameter gradients
         optimizer.zero_grad()
         outputs = net(pre, post)
-        loss = criterion(outputs, mask.long())
+        mask = pre - post
+        loss = criterion(outputs, mask)
 
-        outputs = torch.argmax(outputs, axis=1)
-        score = dice(outputs, mask)
-        iou = multiclass_jaccard_index(outputs, mask, num_classes=2)
         loss.backward()
         optimizer.step()
 
         running_loss += loss.item()
-        running_score += score.item()
-        running_iou += iou.item()
 
-    return running_loss / len(train_loader), running_score / len(train_loader), running_iou / len(train_loader)
+    return running_loss / len(train_loader)
 
 def val(val_loader, net, criterion, device):
     # net.eval()
 
     running_loss = 0.0
-    running_score = 0.0
-    running_iou = 0.0
 
-    for pre, post, mask in tqdm(val_loader):
+    for pre, post, _ in tqdm(val_loader):
         # get the inputs; data is a list of [inputs, labels]
-        pre, post, mask = pre.to(device), post.to(device), mask.to(device)
-
+        pre, post, mask = pre.to(device), post.to(device) 
         outputs = net(pre, post)
-        loss = criterion(outputs, mask.long())
-     
-        outputs = torch.argmax(outputs, axis=1)
-        score = dice(outputs, mask)
-        iou = multiclass_jaccard_index(outputs, mask, num_classes=2)
-        
+        mask = pre - post
+        loss = criterion(outputs, mask)
+             
         running_loss += loss.item()
-        running_score += score.item()
-        running_iou += iou.item()
-
-    return running_loss / len(val_loader), running_score / len(val_loader), running_iou / len(val_loader)
+     
+    return running_loss / len(val_loader)
 
 
 
@@ -95,17 +79,9 @@ def main():
         json.dump(args.__dict__, fout)
         fout.close()
 
-    net = get_model(args)
-    if args.finetune_from:
-        if 'https://' in args.finetune_from:
-            dst_path, _ = weight_and_experiment(args.finetune_from)
-        else:
-            dst_path = args.finetune_from
-        weight = torch.load(dst_path)
-        net.load_state_dict(weight['state_dict'], strict=False)
-    
+    net = get_model(args, n_classes=12)    
     net = net.to(device)
-    criterion = get_loss(args, device)
+    criterion = nn.MSELoss()
     
     if args.optim == "sgd":
         optimizer = optim.SGD(net.parameters(), lr=args.lr, momentum=args.momentum)
@@ -113,44 +89,37 @@ def main():
     elif args.optim == "adam":
         optimizer = optim.Adam(net.parameters(), lr=args.lr)
         scheduler = ReduceLROnPlateau(optimizer, factor=0.1, patience=10, threshold=0.0001)
-    
-
-    if args.resume:
-        dst_path, _ = weight_and_experiment(args.resume)
-        weight = torch.load(dst_path)
-        net.load_state_dict(weight['state_dict'])
 
     engine = Engine(**metadata)
 
-    best_viou = -1
+    best_vloss = 10**9
 
     for epoch in range(args.epochs):
         print(f"Epoch {epoch}")
 
         # Make sure gradient tracking is on, and do a pass over the data
         net.train(True)
-        avg_loss, avg_score, avg_iou = train_one_epoch(train_loader=train_loader, net=net, 
+        avg_loss = train_one_epoch(train_loader=train_loader, net=net, 
                                                 criterion=criterion, optimizer=optimizer,
                                                 device=device)
 
-        print("Train loss {} dice {} iou {}".format(avg_loss, avg_score, avg_iou))
+        print("Train loss {}".format(avg_loss))
         
         with torch.no_grad():
-            avg_vloss, avg_vscore, avg_viou = val(val_loader=val_loader, net=net, 
+            avg_vloss = val(val_loader=val_loader, net=net, 
                                         criterion=criterion, device=device)
         if args.optim == "sgd":
             scheduler.step()
         elif args.optim == "adam":
             scheduler.step(avg_vloss)
         
-        print("Val loss {} dice {} iou {}".format(avg_vloss, avg_vscore, avg_viou))
+        print("Val loss {}".format(avg_vloss))
 
-        engine.log(step=epoch, train_loss=avg_loss, train_score=avg_score, train_iou=avg_iou,
-                val_loss=avg_vloss, val_score=avg_vscore, val_iou=avg_viou)
+        engine.log(step=epoch, train_loss=avg_loss, val_loss=avg_vloss)
         
         # Track best performance, and save the model's state
-        if avg_viou >= best_viou:
-            best_viou = avg_viou
+        if avg_vloss >= best_vloss:
+            best_vloss = avg_vloss
             model_path = f"{ckpt_path}/epoch_{epoch}.pt" 
             torch.save(net.state_dict(), model_path)
             track_ckpts.append(model_path)

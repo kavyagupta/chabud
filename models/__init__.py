@@ -11,20 +11,26 @@ from utils.engine_hub import weight_and_experiment
 __all__ = ["get_model"]
 
 
-def get_model(args):
+def get_model(args, n_channels=12, n_classes=2):
     ############# model #####################
     if args.arch == "bidate_unet":
-        net = BiDateNet(n_channels=12, n_classes=2)
+        net = BiDateNet(n_channels=n_channels, 
+                        n_classes=n_classes)
     elif args.arch == "siamunet_diff":
-        net = SiamUnet_diff(n_channels=12, n_classes=2)
+        net = SiamUnet_diff(n_channels=n_channels, 
+                            n_classes=n_classes)
     elif args.arch == "bidate_concat":
-        net = BiDateConcatNet(n_channels=12, n_classes=2)
+        net = BiDateConcatNet(n_channels=n_channels, 
+                              n_classes=n_classes)
     elif args.arch == "bidate_deeplab_resnet50":
-        net = bidate_deeplab_resnet50(n_channels=12, n_classes=2)
+        net = bidate_deeplab_resnet50(n_channels=n_channels, 
+                                      n_classes=n_classes)
     elif args.arch == "bidate_deeplab_resnet101":
-        net = bidate_deeplab_resnet101(n_channels=12, n_classes=2)
+        net = bidate_deeplab_resnet101(n_channels=n_channels, 
+                                       n_classes=n_classes)
     elif args.arch == "bidate_deeplab_mobilenet_v3_large":
-        net = bidate_deeplab_mobilenet_v3_large(n_channels=12, n_classes=2)
+        net = bidate_deeplab_mobilenet_v3_large(n_channels=n_channels, 
+                                                n_classes=n_classes)
     else:
         print ("Proper architecture name not passed")
         return 
