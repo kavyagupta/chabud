@@ -71,8 +71,8 @@ def bidate_deeplab_mobilenet_v3_large(n_channels=12, n_classes=2):
     out_inplanes = backbone[out_pos].out_channels
     return_layers = {str(out_pos): "out"}
 
-    conv1 = backbone.features[0][0]
-    backbone.features[0][0] = nn.Conv2d(in_channels=n_channels, 
+    conv1 = backbone[0][0]
+    backbone[0][0] = nn.Conv2d(in_channels=n_channels, 
                             out_channels=conv1.out_channels, 
                             kernel_size=conv1.kernel_size, stride=conv1.stride, 
                             padding=conv1.padding, bias=conv1.bias)
