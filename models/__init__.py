@@ -28,10 +28,5 @@ def get_model(args):
     else:
         print ("Proper architecture name not passed")
         return 
-    
-    if args.finetune_from:
-        dst_path, _ = weight_and_experiment(args.finetune_from)
-        weight = torch.load(dst_path)
-        net.load_state_dict(weight, strict=False)
 
     return net
