@@ -88,8 +88,8 @@ def get_dataloader(args):
     )
 
     train_loader = DataLoader(chabud_train, batch_size=args.batch_size, 
-                              shuffle=True)
+                              num_workers=args.num_workers, shuffle=True)
     val_loader = DataLoader(chabud_val, batch_size=args.batch_size, 
-                            shuffle=False)
+                            num_workers=args.num_workers, shuffle=False)
     
     return train_loader, val_loader
