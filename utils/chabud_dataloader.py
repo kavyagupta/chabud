@@ -69,18 +69,18 @@ def get_dataloader(args):
     if args.normalize:
         pipeline.append(A.Normalize(mean=mean, std=std))
 
-    transform_train = A.Compose(pipeline + [A.HorizontalFlip(p=0.5), A.VerticalFlip(p=0.5),
-                                # A.RandomBrightnessContrast(p=0.2), 
-                                # A.OneOf([
-                                #     A.ElasticTransform(p=0.5, alpha=120, sigma=120 * 0.05, alpha_affine=120 * 0.03),
-                                #     A.GridDistortion(p=0.5),
-                                #     A.OpticalDistortion(distort_limit=1, shift_limit=0.5, p=1),
-                                #     ], p=0.8),
+    transform_train = A.Compose([A.HorizontalFlip(p=0.5), A.VerticalFlip(p=0.5),
+                                A.RandomBrightnessContrast(p=0.2), 
+                                A.OneOf([
+                                    A.ElasticTransform(p=0.5, alpha=120, sigma=120 * 0.05, alpha_affine=120 * 0.03),
+                                    A.GridDistortion(p=0.5),
+                                    A.OpticalDistortion(distort_limit=1, shift_limit=0.5, p=1),
+                                    ], p=0.8),
                                 A.Resize(args.window, args.window)
-                              ],
+                              ] + pipeline,
                               additional_targets={'post': 'image'})
     
-    transform_val = A.Compose(pipeline + [A.Resize(args.window, args.window)],
+    transform_val = A.Compose([A.Resize(args.window, args.window)] + pipeline,
                               additional_targets={'post': 'image'})
 
     chabud_train = ChabudDataset(
