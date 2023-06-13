@@ -53,7 +53,7 @@ def parse_args():
     parser.add_argument(
         "--num-workers",
         type=int,
-        default=2,
+        default=4,
         metavar="N",
     )
     
