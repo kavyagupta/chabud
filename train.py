@@ -50,7 +50,7 @@ def train_one_epoch(train_loader, net, criterion,
     return running_loss / len(train_loader), running_score / len(train_loader), running_iou / len(train_loader)
 
 def val(val_loader, net, criterion, device):
-    net.eval()
+    # net.eval()
 
     running_loss = 0.0
     running_score = 0.0
@@ -127,8 +127,9 @@ def main():
 
         print("Train loss {} dice {} iou {}".format(avg_loss, avg_score, avg_iou))
         
-        avg_vloss, avg_vscore, avg_viou = val(val_loader=val_loader, net=net, 
-                                     criterion=criterion, device=device)
+        with torch.no_grad():
+            avg_vloss, avg_vscore, avg_viou = val(val_loader=val_loader, net=net, 
+                                        criterion=criterion, device=device)
         if args.optim == "sgd":
             scheduler.step()
         elif args.optim == "adam":
