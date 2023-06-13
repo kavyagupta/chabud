@@ -101,6 +101,8 @@ def get_loss(args, device):
     elif args.loss == "focal":
         args.alpha = torch.tensor(list(map(float, args.alpha.split(',')))).to(device)
         criterion = FocalLoss(args.alpha, args.gamma)
+    elif args.loss == 'mse':
+        criterion = nn.MSELoss()
     else:
         print("Loss not found")
         return

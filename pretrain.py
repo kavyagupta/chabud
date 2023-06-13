@@ -18,6 +18,7 @@ from engine import Engine
 from models import get_model
 from utils.chabud_dataloader import get_dataloader
 from utils.args import parse_args
+from utils.loss import get_loss
 
 
 def train_one_epoch(train_loader, net, criterion, 
@@ -81,7 +82,7 @@ def main():
 
     net = get_model(args, n_classes=12)    
     net = net.to(device)
-    criterion = nn.MSELoss()
+    criterion = get_loss(args, device)
     
     if args.optim == "sgd":
         optimizer = optim.SGD(net.parameters(), lr=args.lr, momentum=args.momentum)
