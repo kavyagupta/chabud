@@ -120,7 +120,7 @@ def main():
         engine.log(step=epoch, train_loss=avg_loss, val_loss=avg_vloss)
         
         # Track best performance, and save the model's state
-        if avg_vloss >= best_vloss:
+        if avg_vloss < best_vloss:
             best_vloss = avg_vloss
             model_path = f"{ckpt_path}/epoch_{epoch}.pt" 
             torch.save(net.state_dict(), model_path)
