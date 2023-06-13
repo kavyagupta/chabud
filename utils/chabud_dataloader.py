@@ -37,14 +37,14 @@ class ChabudDataset(data.Dataset):
         mask_string = data["properties"][0]["labels"][0]
         img_mask = np.array(Image.open(io.BytesIO(base64.b64decode(mask_string))))
 
-        img_pre = []
-        img_post = []
+        pre = []
+        post = []
         for i in range(img_pre.shape[0]):
-            img_pre.append(cv2.resize(img_pre[i], (512, 512), interpolation=cv2.INTER_CUBIC))
-            img_post.append(cv2.resize(img_post[i], (512, 512), interpolation=cv2.INTER_CUBIC))
+            pre.append(cv2.resize(img_pre[i], (512, 512), interpolation=cv2.INTER_CUBIC))
+            post.append(cv2.resize(img_post[i], (512, 512), interpolation=cv2.INTER_CUBIC))
 
-        img_pre = np.asarray(img_pre)
-        img_post = np.asarray(img_post)
+        img_pre = np.asarray(pre)
+        img_post = np.asarray(post)
         
         if self.transform:
             transformed = self.transform(image = img_pre.transpose(1, 2, 0), 
