@@ -67,7 +67,7 @@ def get_dataloader(args):
 
     pipeline = []
     if args.normalize:
-        pipeline.append(A.normalize(mean=mean, std=std))
+        pipeline.append(A.Normalize(mean=mean, std=std))
 
     transform_train = A.Compose(pipeline + [A.HorizontalFlip(p=0.5), A.VerticalFlip(p=0.5),
                                 # A.RandomBrightnessContrast(p=0.2), 
