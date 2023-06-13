@@ -97,7 +97,10 @@ def main():
 
     net = get_model(args)
     if args.finetune_from:
-        dst_path, _ = weight_and_experiment(args.finetune_from)
+        if 'https://' in args.finetune_from:
+            dst_path, _ = weight_and_experiment(args.finetune_from)
+        else:
+            dst_path = args.finetune_from
         weight = torch.load(dst_path)
         net.load_state_dict(weight['state_dict'], strict=False)
     
