@@ -137,6 +137,9 @@ def main():
         
         print("Val loss {} dice {} iou {}".format(avg_vloss, avg_vscore, avg_viou))
 
+        engine.log(step=epoch, train_loss=avg_loss, train_score=avg_score, train_iou=avg_iou,
+                val_loss=avg_vloss, val_score=avg_vscore, val_iou=avg_viou)
+        
         # Track best performance, and save the model's state
         if avg_viou >= best_viou:
             best_viou = avg_viou
@@ -152,12 +155,7 @@ def main():
             dst_path = engine.meta['experimentUrl']
             os.system(f"gsutil -m rsync -r -d {ckpt_path}/ {dst_path} 2> /dev/null")
 
-            engine.log(step=epoch, best=True, checkpoint_path=model_path,
-                       train_loss=avg_loss, train_score=avg_score, train_iou=avg_iou,
-                   val_loss=avg_vloss, val_score=avg_vscore, val_iou=avg_viou)
-        else:
-            engine.log(step=epoch, train_loss=avg_loss, train_score=avg_score, train_iou=avg_iou,
-                   val_loss=avg_vloss, val_score=avg_vscore, val_iou=avg_viou)
+            engine.log(step=epoch, best=True, checkpoint_path=model_path)
         
     engine.done()
 
