@@ -42,7 +42,7 @@ def parse_args():
     parser.add_argument("--optim", default="sgd", help="optimizer sgd/adam")
     
     # Data
-    
+    parser.add_argument("--normalize", action='store_true', help="normalize")
     parser.add_argument(
         "--batch-size",
         type=int,

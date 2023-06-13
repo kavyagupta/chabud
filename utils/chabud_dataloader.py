@@ -58,8 +58,18 @@ def get_dataloader(args):
     train_list = data["dataset"]["train"]
     val_list = data["dataset"]["val"]
 
+    mean=[1353.72692573, 1117.20229235, 1041.88472484,  946.55425487,
+        1199.1886645 , 2003.00679994, 2374.00844442, 2301.22043839,
+        732.18195008,   12.09952762, 1118.20272293, 2599.78293726]
+    std=[ 72.41170098, 146.47166895, 158.20546468, 217.42332058,
+            168.33411967, 230.56343772, 296.15066586, 307.65398036,
+            85.71403735,   0.8560447, 221.18654082, 329.1786173 ]
 
-    transform_train = A.Compose([A.HorizontalFlip(p=0.5), A.VerticalFlip(p=0.5),
+    pipeline = []
+    if args.normalize:
+        pipeline.append(A.normalize(mean=mean, std=std))
+
+    transform_train = A.Compose(pipeline + [A.HorizontalFlip(p=0.5), A.VerticalFlip(p=0.5),
                                 # A.RandomBrightnessContrast(p=0.2), 
                                 # A.OneOf([
                                 #     A.ElasticTransform(p=0.5, alpha=120, sigma=120 * 0.05, alpha_affine=120 * 0.03),
@@ -70,7 +80,7 @@ def get_dataloader(args):
                               ],
                               additional_targets={'post': 'image'})
     
-    transform_val = A.Compose([A.Resize(args.window, args.window)],
+    transform_val = A.Compose(pipeline + [A.Resize(args.window, args.window)],
                               additional_targets={'post': 'image'})
 
     chabud_train = ChabudDataset(
