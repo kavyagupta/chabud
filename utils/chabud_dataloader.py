@@ -76,7 +76,6 @@ def get_dataloader(args):
                                     A.GridDistortion(p=0.5),
                                     A.OpticalDistortion(distort_limit=1, shift_limit=0.5, p=1),
                                     ], p=0.8),
-                                A.MaskDropout((1,2), p=0.5),
                                 A.Resize(args.window, args.window)
                               ] + pipeline,
                               additional_targets={'post': 'image'})
