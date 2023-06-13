@@ -110,7 +110,7 @@ def main():
     if args.resume:
         dst_path, _ = weight_and_experiment(args.resume)
         weight = torch.load(dst_path)
-        net.load_state_dict(weight)
+        net.load_state_dict(weight['state_dict'])
 
     engine = Engine(**metadata)
 
