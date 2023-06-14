@@ -89,6 +89,8 @@ if __name__ == '__main__':
     parser.add_argument(
         "--vector-dir", required=True, type=str, help="Name of the experiment (creates dir with this name in --result-dir)",
     )
+    parser.add_argument("--bands", default="0,1,2,3,4,5,6,7,8,9,10,11", 
+                        help="bands to use")
 
     args = parser.parse_args()
 
