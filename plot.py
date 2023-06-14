@@ -1,23 +1,20 @@
-import argparse
-import numpy as np
-import cv2
-
-import torch
 import os
+import tqdm 
+import argparse
+import operator
 
-from utils.chabud_dataloader import get_dataloader, _stretch_8bit
-from utils.loss import get_loss
-
-from models import get_model
+import cv2
+import numpy as np
+import torch
 from torchmetrics.functional import dice
 from torchmetrics.functional.classification import multiclass_jaccard_index
 
+from models import get_model
 
-try:
-    from engine.libs.hub import get_last_weight, get_best_weight
-except ImportError:
-    raise ImportError(
-        'Please run "pip install granular-engine" to install engine')
+from utils.chabud_dataloader import get_dataloader, _stretch_8bit
+from utils.loss import get_loss
+from utils.engine_hub import weight_and_experiment
+
 
 def save_img(sample_post, sample_pre):
     post_r = sample_post[1, :, :]
@@ -45,48 +42,29 @@ def save_img(sample_post, sample_pre):
     return
 
 
-def weight_and_experiment(args):
-    net = get_model(args)
-
-    if best:
-        checkpoint, experiment_id = get_best_weight(args.cpt_url)
-    else:
-        checkpoint, experiment_id = get_last_weight(args.cpt_url)
-
-    dst_path = 'pretrain/' + '/'.join(checkpoint.replace('gs://', '').replace('s3://', '').split('/')[2:])
-    os.system(f"gsutil -m cp -n -r {checkpoint} {dst_path} 2> /dev/null")
-
-    weight = torch.load(dst_path)
-    if 'state_dict' in weight:
-        weight = weight['state_dict']
-    model_dict = net.state_dict()
-               
-    return net.load_state_dict(model_dict)
-
-
-def val(val_loader, net, criterion, device):
+def val(val_loader, net, device):
     # net.eval()
+    results = []
 
-    running_loss = 0.0
-    running_score = 0.0
-    running_iou = 0.0
-
+    idx = 0
     for pre, post, mask in tqdm(val_loader):
         # get the inputs; data is a list of [inputs, labels]
         pre, post, mask = pre.to(device), post.to(device), mask.to(device)
 
         outputs = net(pre, post)
-        loss = criterion(outputs, mask.long())
      
         outputs = torch.argmax(outputs, axis=1)
-        score = dice(outputs, mask)
-        iou = multiclass_jaccard_index(outputs, mask, num_classes=2)
-        
-        running_loss += loss.item()
-        running_score += score.item()
-        running_iou += iou.item()
+        ious = multiclass_jaccard_index(outputs, mask, num_classes=2, average=None)
+        outputs = outputs.data.cpu().numpy()
+        ious = ious.data.cpu().numpy()
 
-    return outputs, running_loss, running_score, running_iou
+        for i in range(pre.shape[0]):
+            results.append(val_loader.data_list[idx], 
+                           outputs[i].astype(np.uint8),
+                           ious[i])
+            idx += 1
+
+    return results
 
 
 if __name__ == '__main__':
@@ -94,7 +72,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Plotting images")
 
     parser.add_argument(
-        "--cpt-url", type=str, required=True, help="url of the model")
+        "--experiment-url", type=str, required=True, help="url of the model")
 
     parser.add_argument(
         "--data-path", type=str, required=True, help="folder to save the images")
@@ -117,16 +95,26 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
-    device = torch.device("cuda:0")
-    net = weight_and_experiment(args)
+    device = torch.device("cpu")
+    dst_path, _ = weight_and_experiment(args.experiment_url)
+    net = get_model(args)
     net.to(device)
+    weight = torch.load(dst_path)
+    net.load_state_dict(weight)
     net.eval()
 
     _, val_loader = get_dataloader(args)
     criterion = get_loss(args, device)
 
-    outputs, vloss, vscore, viou = val(val_loader=val_loader, net=net, 
+    results = val(val_loader=val_loader, net=net, 
                                         criterion=criterion, device=device)
     
-    sorted, indices = torch.sort(viou)
+    results = sorted(results, key=operator.itemgetter(2))
+    worst5 = results[:5]
+    best5 = results[:5]
+    
+
+
+
+    
         
