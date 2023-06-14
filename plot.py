@@ -5,7 +5,7 @@ import cv2
 import torch
 import os
 
-from utils.chabud_dataloader import get_dataloader
+from utils.chabud_dataloader import get_dataloader, _stretch_8bit
 from utils.loss import get_loss
 
 from models import get_model
@@ -18,23 +18,6 @@ try:
 except ImportError:
     raise ImportError(
         'Please run "pip install granular-engine" to install engine')
-
-
-def _stretch_8bit(band, lower_percent=0, higher_percent=98):
-    a = 0
-    b = 255
-    real_values = band.flatten()
-    # real_values = real_values[real_values > 0]
-
-    c = np.percentile(real_values, lower_percent)
-    d = np.percentile(real_values, higher_percent)
-    if (d - c) == 0:
-        d += 1
-    t = a + (band - c) * ((b - a) / (d - c))
-    t[t < a] = a
-    t[t > b] = b
-    return t.astype(np.uint8)
-
 
 def save_img(sample_post, sample_pre):
     post_r = sample_post[1, :, :]
@@ -122,9 +105,15 @@ if __name__ == '__main__':
     parser.add_argument(
         "--loss", required=True, type=str, help="cross entropy/focal")
 
-    # parser.add_argument(
-    #     "--csv-name", type=str, required=True, help="prediction csv name")
-
+    parser.add_argument(
+        "--config-path", type=str, required=True, help="config path",
+    )
+    parser.add_argument(
+        "--data-root", default="./data", type=str, help="directory to save results",
+    )
+    parser.add_argument(
+        "--vector-dir", required=True, type=str, help="Name of the experiment (creates dir with this name in --result-dir)",
+    )
 
     args = parser.parse_args()
 
