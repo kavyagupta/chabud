@@ -56,6 +56,7 @@ def val(val_loader, net, device):
         outputs = net(pre, post)
      
         outputs = torch.argmax(outputs, axis=1).long()
+        print (outputs.min(), outputs.max())
 
         for i in range(pre.shape[0]):
             iou = jaccard_index(outputs[i], mask[i])
