@@ -35,6 +35,7 @@ def train_one_epoch(train_loader, net, criterion,
         # zero the parameter gradients
         optimizer.zero_grad()
         outputs, aux1, aux2, aux3 = net(pre, post)
+        mask = mask.unsqueeze(1)
         loss = criterion(outputs, mask.float()) + \
                criterion(aux1, mask.float()) +\
                criterion(aux2, mask.float()) +\
@@ -64,6 +65,7 @@ def val(val_loader, net, criterion, device):
         pre, post, mask = pre.to(device), post.to(device), mask.to(device)
 
         outputs, aux1, aux2, aux3 = net(pre, post)
+        mask = mask.unsqueeze(1)
         loss = criterion(outputs, mask.float()) + \
                criterion(aux1, mask.float()) +\
                criterion(aux2, mask.float()) +\
