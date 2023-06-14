@@ -1,4 +1,5 @@
 import argparse
+import numpy as np
 
 import torch
 import os
@@ -14,6 +15,23 @@ try:
 except ImportError:
     raise ImportError(
         'Please run "pip install granular-engine" to install engine')
+
+
+def _stretch_8bit(band, lower_percent=0, higher_percent=98):
+    a = 0
+    b = 255
+    real_values = band.flatten()
+    # real_values = real_values[real_values > 0]
+
+    c = np.percentile(real_values, lower_percent)
+    d = np.percentile(real_values, higher_percent)
+    if (d - c) == 0:
+        d += 1
+    t = a + (band - c) * ((b - a) / (d - c))
+    t[t < a] = a
+    t[t > b] = b
+    return t.astype(np.uint8)
+
 
 def weight_and_experiment(args):
     net = get_model(args)
@@ -93,4 +111,26 @@ if __name__ == '__main__':
     
     vloss, vscore, viou = val(val_loader=val_loader, net=net, 
                                         criterion=criterion, device=device)
+    
+    sorted, indices = torch.sort(viou)
 
+    for 
+
+        post_r = sample_post[1, :, :]
+        post_g = sample_post[2, :, :]
+        post_b = sample_post[3, :, :]
+
+        pre_r = sample_pre[1, : ,:]
+        pre_g = sample_pre[2, :, :]
+        pre_b = sample_pre[3, :, :]
+
+        post_r = _stretch_8bit(post_r)
+        post_g = _stretch_8bit(post_g)
+        post_b = _stretch_8bit(post_b)
+
+        pre_r = _stretch_8bit(pre_r)
+        pre_g = _stretch_8bit(pre_g)
+        pre_b = _stretch_8bit(pre_b)
+
+        post_rgb = np.asarray([post_r, post_g, post_b])
+        pre_rgb = np.asarray([pre_r, pre_g, pre_b])
