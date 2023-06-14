@@ -112,6 +112,9 @@ if __name__ == '__main__':
     results = sorted(results, key=operator.itemgetter(2))
     worst5 = results[:5]
     best5 = results[:5]
+
+    print(worst5)
+    print(best5)
     
 
 
