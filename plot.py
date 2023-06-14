@@ -55,7 +55,8 @@ def val(val_loader, net, device):
         outputs = net(pre, post)
      
         outputs = torch.argmax(outputs, axis=1)
-        ious = multiclass_jaccard_index(outputs, mask, num_classes=2, average=None)
+        ious = multiclass_jaccard_index(outputs, mask, num_classes=2, 
+                                        multidim_average='samplewise')
         outputs = outputs.data.cpu().numpy()
         ious = ious.data.cpu().numpy()
         print (ious)
