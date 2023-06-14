@@ -46,7 +46,9 @@ def save_img(sample_post, sample_pre):
 def val(val_loader, net, device):
     # net.eval()
     results = []
-    jaccard_index = JaccardIndex(task="binary", multidim_average="samplewise")
+    jaccard_index = JaccardIndex(task="binary", 
+                                 multidim_average="samplewise",
+                                 device=device)
 
     idx = 0
     for pre, post, mask in tqdm.tqdm(val_loader):
