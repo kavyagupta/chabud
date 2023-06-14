@@ -8,7 +8,7 @@ import cv2
 import numpy as np
 import torch
 from torchmetrics.functional import dice
-from torchmetrics.functional.classification import multiclass_jaccard_index
+from torchmetrics import JaccardIndex
 
 from models import get_model
 
@@ -46,6 +46,7 @@ def save_img(sample_post, sample_pre):
 def val(val_loader, net, device):
     # net.eval()
     results = []
+    jaccard_index = JaccardIndex(task="binary", multidim_average="samplewise")
 
     idx = 0
     for pre, post, mask in tqdm.tqdm(val_loader):
@@ -55,8 +56,7 @@ def val(val_loader, net, device):
         outputs = net(pre, post)
      
         outputs = torch.argmax(outputs, axis=1)
-        ious = multiclass_jaccard_index(outputs, mask, num_classes=2, 
-                                        multidim_average='samplewise')
+        ious = jaccard_index(outputs, mask)
         outputs = outputs.data.cpu().numpy()
         ious = ious.data.cpu().numpy()
         print (ious)
