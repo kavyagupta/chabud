@@ -27,8 +27,8 @@ def train_one_epoch(train_loader, net, criterion,
     running_score = 0.0
     running_iou = 0.0
 
-    dice = Dice(average="micro")
-    jaccard_index = JaccardIndex(task="binary")
+    dice = Dice(average="micro").to(device)
+    jaccard_index = JaccardIndex(task="binary").to(device)
 
     for pre, post, mask in tqdm(train_loader):
         # get the inputs; data is a list of [inputs, labels]
@@ -58,8 +58,8 @@ def val(val_loader, net, criterion, device):
     running_score = 0.0
     running_iou = 0.0
 
-    dice = Dice(average="micro")
-    jaccard_index = JaccardIndex(task="binary")
+    dice = Dice(average="micro").to(device)
+    jaccard_index = JaccardIndex(task="binary").to(device)
 
     for pre, post, mask in tqdm(val_loader):
         # get the inputs; data is a list of [inputs, labels]
