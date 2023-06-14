@@ -112,7 +112,7 @@ def main():
         scheduler = MultiStepLR(optimizer, milestones=[100, 150, 200], gamma=0.1)
     elif args.optim == "adam":
         optimizer = optim.Adam(net.parameters(), lr=args.lr)
-        scheduler = ReduceLROnPlateau(optimizer, factor=0.1, patience=10, threshold=0.0001)
+        # scheduler = ReduceLROnPlateau(optimizer, factor=0.1, patience=10, threshold=0.0001)
     
 
     if args.resume:
@@ -140,8 +140,8 @@ def main():
                                         criterion=criterion, device=device)
         if args.optim == "sgd":
             scheduler.step()
-        elif args.optim == "adam":
-            scheduler.step(avg_vloss)
+        # elif args.optim == "adam":
+        #     scheduler.step(avg_vloss)
         
         print("Val loss {} dice {} iou {}".format(avg_vloss, avg_vscore, avg_viou))
 
