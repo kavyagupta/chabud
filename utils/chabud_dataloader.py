@@ -163,7 +163,7 @@ def get_dataloader(args):
         data_list=train_list,
         bands=args.bands,
         bit8=bit8,
-        swap=args.swap
+        swap=args.swap,
         transform=transform_train
     )
 
