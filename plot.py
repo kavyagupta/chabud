@@ -56,13 +56,13 @@ def val(val_loader, net, device):
 
         outputs = net(pre, post)
 
-        print (outputs.min(), outputs.max(), outputs.shape)
+        # print (outputs.min(), outputs.max(), outputs.shape)
         outputs = torch.argmax(outputs, axis=1)
-        print (outputs.min(), outputs.max(), outputs.shape)
+        # print (outputs.min(), outputs.max(), outputs.shape)
 
         for i in range(pre.shape[0]):
             iou = jaccard_index(outputs[i], mask[i])
-            print (iou.item())
+            # print (iou.item())
             results.append([val_loader.dataset.data_list[idx], 
                            outputs[i].data.cpu().numpy().astype(np.uint8),
                            iou.item()])
@@ -117,7 +117,7 @@ if __name__ == '__main__':
         data = json.load(fin)
         fin.close()
 
-        print (data, best[0])
+        # print (data, best[0])
 
         img_pre = rio.open(os.path.join(args.data_root,
                                         data["images"][0]["file_name"])).read()
