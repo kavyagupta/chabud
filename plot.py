@@ -112,6 +112,7 @@ if __name__ == '__main__':
         os.makedirs(f"plots/{args.plot_dir}/")
 
     for idx, best in enumerate(best5):
+        print (best[0])
         fin = open(os.path.join(args.data_root, args.vector_dir, 
                                 best[0]))
         data = json.load(fin)
