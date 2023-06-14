@@ -114,6 +114,8 @@ if __name__ == '__main__':
         data = json.load(fin)
         fin.close()
 
+        print (data, best[0])
+
         img_pre = rio.open(os.path.join(args.data_root,
                                         data["images"][0]["file_name"])).read()
         img_post = rio.open(os.path.join(args.data_root,
@@ -125,6 +127,7 @@ if __name__ == '__main__':
         pred_mask = np.stack([best[1], best[1], best[1]]).transpose(1, 2, 0)
 
         img_pre, img_post = get_8bit(img_pre, img_post)
+        
 
         print (img_mask.shape, pred_mask.shape, img_pre.shape, img_post.shape)
     
