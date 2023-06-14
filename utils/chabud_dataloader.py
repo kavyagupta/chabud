@@ -2,6 +2,7 @@ import os
 import io
 import json
 import base64
+import random
 
 import cv2
 import numpy as np
@@ -84,6 +85,10 @@ class ChabudDataset(data.Dataset):
 
         img_pre = np.asarray(pre)
         img_post = np.asarray(post)
+
+        if random.random() > 0.5:
+            # swap pre post as a form of augmentation
+            img_pre, img_post = img_post, img_pre
         
         if self.transform:
             transformed = self.transform(image = img_pre.transpose(1, 2, 0), 
