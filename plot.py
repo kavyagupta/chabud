@@ -79,7 +79,7 @@ if __name__ == '__main__':
 
     device = torch.device("cuda:0")
     dst_path, _ = weight_and_experiment(args.experiment_url, best=True)
-    fin = open('/'.join(dst_path.split('/')[:-1]) + '/engine_config.json', 'r')
+    fin = open('/'.join(dst_path.split('/')[:-1]) + '/epxeriment_config.json', 'r')
     metadata = json.load(fin)
     args.update(metadata)
     fin.close()
