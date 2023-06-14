@@ -127,7 +127,7 @@ def jaccard_loss(logits, true, eps=1e-7):
     """
     num_classes = logits.shape[1]
     if num_classes == 1:
-        true_1_hot = torch.eye(num_classes + 1)[true.squeeze(1)]
+        true_1_hot = torch.eye(num_classes + 1)[true.squeeze(1)].type_as(true)
         true_1_hot = true_1_hot.permute(0, 3, 1, 2).float()
         true_1_hot_f = true_1_hot[:, 0:1, :, :]
         true_1_hot_s = true_1_hot[:, 1:2, :, :]
@@ -136,7 +136,7 @@ def jaccard_loss(logits, true, eps=1e-7):
         neg_prob = 1 - pos_prob
         probas = torch.cat([pos_prob, neg_prob], dim=1)
     else:
-        true_1_hot = torch.eye(num_classes)[true.squeeze(1)]
+        true_1_hot = torch.eye(num_classes)[true.squeeze(1)].type_as(true)
         true_1_hot = true_1_hot.permute(0, 3, 1, 2).float()
         probas = F.softmax(logits, dim=1)
     true_1_hot = true_1_hot.type(logits.type())
