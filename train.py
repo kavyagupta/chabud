@@ -102,7 +102,18 @@ def main():
         else:
             dst_path = args.finetune_from
         weight = torch.load(dst_path)
-        net.load_state_dict(weight['state_dict'], strict=False)
+        if 'state_dict' in weight:
+            net.load_state_dict(weight['state_dict'], strict=False)
+        else:
+            net.load_state_dict(weight, strict=False)
+    
+    if args.resume:
+        dst_path, _ = weight_and_experiment(args.resume)
+        weight = torch.load(dst_path)
+        if 'state_dict' in weight:
+            net.load_state_dict(weight['state_dict'])
+        else:
+            net.load_state_dict(weight)
     
     net = net.to(device)
     criterion = get_loss(args, device)
@@ -114,15 +125,6 @@ def main():
         optimizer = optim.Adam(net.parameters(), lr=args.lr)
         # scheduler = ReduceLROnPlateau(optimizer, factor=0.1, patience=10, threshold=0.0001)
     
-
-    if args.resume:
-        dst_path, _ = weight_and_experiment(args.resume)
-        weight = torch.load(dst_path)
-        if 'state_dict' in weight:
-            net.load_state_dict(weight['state_dict'])
-        else:
-            net.load_state_dict(weight)
-
     engine = Engine(**metadata)
 
     best_viou = -1
