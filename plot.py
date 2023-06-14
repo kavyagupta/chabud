@@ -109,7 +109,7 @@ if __name__ == '__main__':
     best5 = results[-5:]
 
     for best in best5:
-        fin = open(os.path.join(args.data_root, args.json_dir, 
+        fin = open(os.path.join(args.data_root, args.vector_dir, 
                                 best[0]))
         data = json.load(fin)
         fin.close()
