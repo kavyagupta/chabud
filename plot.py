@@ -59,6 +59,7 @@ def val(val_loader, net, device):
 
         for i in range(pre.shape[0]):
             iou = jaccard_index(outputs[i], mask[i])
+            print (iou.item())
             results.append([val_loader.dataset.data_list[idx], 
                            outputs[i].data.cpu().numpy().astype(np.uint8),
                            iou.item()])
@@ -98,11 +99,6 @@ if __name__ == '__main__':
     results = val(val_loader=val_loader, net=net, device=device)
     
     results = sorted(results, key=operator.itemgetter(2))
-    worst5 = results[:5]
-    best5 = results[-5:]
-
-    print(worst5)
-    print(best5)
     
 
 
