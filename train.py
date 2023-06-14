@@ -103,10 +103,13 @@ def main():
             dst_path = args.finetune_from
         weight = torch.load(dst_path)
         if 'state_dict' in weight:
-            net.load_state_dict(weight['state_dict'], strict=False)
-        else:
-            net.load_state_dict(weight, strict=False)
-    
+            weight = weight['state_dict']
+        model_dict = net.state_dict()
+        pretrained_dict = {k: v for k, v in weight.items() if k in model_dict}
+        model_dict.update(pretrained_dict)
+        net.load_state_dict(model_dict)
+
+        
     if args.resume:
         dst_path, _ = weight_and_experiment(args.resume)
         weight = torch.load(dst_path)
