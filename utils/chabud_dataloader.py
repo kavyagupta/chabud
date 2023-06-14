@@ -110,6 +110,7 @@ def get_dataloader(args):
     if args.bands == [1, 2, 3]:
         mean_bands = [0.406, 0.456, 0.485]
         std_bands = [0.225, 0.224, 0.229]
+        bit8 = True
     else:
         mean=[1353.72692573, 1117.20229235, 1041.88472484,  946.55425487,
             1199.1886645 , 2003.00679994, 2374.00844442, 2301.22043839,
@@ -123,6 +124,8 @@ def get_dataloader(args):
         for i in args.bands:
             mean_bands.append(mean[i])
             std_bands.append(std[i])
+        
+        bit8 = False
 
     pipeline = []
     if args.normalize:
@@ -152,6 +155,7 @@ def get_dataloader(args):
         json_dir=args.vector_dir,
         data_list=train_list,
         bands=args.bands,
+        bit8=bit8,
         transform=transform_train
     )
 
@@ -160,6 +164,7 @@ def get_dataloader(args):
         json_dir=args.vector_dir,
         data_list=val_list,
         bands=args.bands,
+        bit8=bit8,
         transform=transform_val
     )
 
