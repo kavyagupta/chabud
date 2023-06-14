@@ -112,8 +112,8 @@ def main():
                                         criterion=criterion, device=device)
         if args.optim == "sgd":
             scheduler.step()
-        elif args.optim == "adam":
-            scheduler.step(avg_vloss)
+        # elif args.optim == "adam":
+        #     scheduler.step(avg_vloss)
         
         print("Val loss {}".format(avg_vloss))
 
