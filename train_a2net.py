@@ -101,7 +101,7 @@ def main():
         json.dump(args.__dict__, fout)
         fout.close()
 
-    net = get_model(args, num_channels=len(args.bands))
+    net = get_model(args, n_channels=len(args.bands))
     if args.finetune_from:
         if 'https://' in args.finetune_from:
             dst_path, _ = weight_and_experiment(args.finetune_from)
