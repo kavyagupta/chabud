@@ -132,11 +132,10 @@ if __name__ == '__main__':
         img_pre, img_post = get_8bit(img_pre, img_post)
         
 
-        rgb = np.stack([img_pre, img_post], axis=0)
-        mask = np.stack([img_mask, pred_mask], axis=0)
-        out = np.stack([rgb, mask], axis=1)
-
-        cv2.imwrite(f"plots/{args.plot_dir}/best{idx}.png", out)
+        cv2.imwrite(f"plots/{args.plot_dir}/best{idx}_img_pre.png", img_pre)
+        cv2.imwrite(f"plots/{args.plot_dir}/best{idx}_img_post.png", img_post)
+        cv2.imwrite(f"plots/{args.plot_dir}/best{idx}_pred.png", img_mask * 255)
+        cv2.imwrite(f"plots/{args.plot_dir}/best{idx}_mask.png", pred_mask * 255)
     
 
 
