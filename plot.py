@@ -108,7 +108,10 @@ if __name__ == '__main__':
     worst5 = results[:5]
     best5 = results[-5:]
 
-    for best in best5:
+    if not os.path.exists(f"plots/{args.plot_dir}/"):
+        os.makedirs(f"plots/{args.plot_dir}/")
+
+    for idx, best in enumerate(best5):
         fin = open(os.path.join(args.data_root, args.vector_dir, 
                                 best[0]))
         data = json.load(fin)
@@ -129,7 +132,11 @@ if __name__ == '__main__':
         img_pre, img_post = get_8bit(img_pre, img_post)
         
 
-        print (img_mask.shape, pred_mask.shape, img_pre.shape, img_post.shape)
+        rgb = np.stack([img_pre, img_post], dim=0)
+        mask = np.stack([img_mask, pred_mask], dim=0)
+        out = np.stack([rgb, mask], dim=1)
+
+        cv2.imwrite(f"plots/{args.plot_dir}/best{idx}.png", out)
     
 
 
