@@ -87,10 +87,10 @@ class ChabudDataset(data.Dataset):
         img_pre = np.asarray(pre)
         img_post = np.asarray(post)
 
-        if self.swap and random.random() > 0.5:
-            # swap pre post as a form of augmentation
-            img_pre, img_post = img_post, img_pre
-            img_mask = np.zeros(img_mask.shape, dtype=np.uint8)
+        # if self.swap and random.random() > 0.5:
+        #     # swap pre post as a form of augmentation
+        #     img_pre, img_post = img_post, img_pre
+        #     img_mask = np.zeros(img_mask.shape, dtype=np.uint8)
         
         if self.transform:
             transformed = self.transform(image = img_pre.transpose(1, 2, 0), 
@@ -139,12 +139,12 @@ def get_dataloader(args):
         pipeline.append(A.Normalize(mean=mean_bands, std=std_bands))
 
     transform_train = A.Compose([A.OneOf([
-                                    A.RandomSizedCrop(min_max_height=(256, 512), height=512, width=512, p=0.5),
-                                    A.PadIfNeeded(min_height=256, min_width=256, p=0.5)
-                                ], p=1),
+                                    A.RandomSizedCrop(min_max_height=(300, 512), height=512, width=512, p=0.5),
+                                    A.PadIfNeeded(min_height=300, min_width=300, p=0.5)
+                                ], p=0.8),
                                 A.HorizontalFlip(p=0.5), 
                                 A.VerticalFlip(p=0.5),
-                                # A.RandomBrightnessContrast(p=0.2), 
+                                A.RandomBrightnessContrast(p=0.3), 
                                 A.OneOf([
                                     A.ElasticTransform(p=0.5, alpha=120, sigma=120 * 0.05, alpha_affine=120 * 0.03),
                                     A.GridDistortion(p=0.5),
