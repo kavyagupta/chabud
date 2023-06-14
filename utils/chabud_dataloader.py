@@ -47,12 +47,13 @@ def _stretch_8bit(band, lower_percent=0, higher_percent=98):
 
 class ChabudDataset(data.Dataset):
     def __init__(self, data_root, json_dir, data_list, bands, 
-                 bit8=False, transform = None):
+                 bit8=False, swap=False, transform = None):
         self.data_root = data_root
         self.json_dir = json_dir
         self.data_list = data_list
         self.bands = bands
         self.bit8 = bit8
+        self.swap = swap
         self.transform = transform
 
     def __len__(self):
@@ -86,9 +87,10 @@ class ChabudDataset(data.Dataset):
         img_pre = np.asarray(pre)
         img_post = np.asarray(post)
 
-        if random.random() > 0.5:
+        if self.swap and random.random() > 0.5:
             # swap pre post as a form of augmentation
             img_pre, img_post = img_post, img_pre
+            img_mask = np.zeros(img_mask.shape)
         
         if self.transform:
             transformed = self.transform(image = img_pre.transpose(1, 2, 0), 
@@ -161,6 +163,7 @@ def get_dataloader(args):
         data_list=train_list,
         bands=args.bands,
         bit8=bit8,
+        swap=args.swap
         transform=transform_train
     )
 
