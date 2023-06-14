@@ -74,15 +74,12 @@ if __name__ == '__main__':
     parser.add_argument(
         "--experiment-url", type=str, required=True, help="url of the model")
 
-    parser.add_argument(
-        "--data-path", type=str, required=True, help="folder to save the images")
+    # parser.add_argument(
+    #     "--data-path", type=str, required=True, help="folder to save the images")
 
     parser.add_argument(
         "--arch", type=str, required=True, help="model arch")
     
-    parser.add_argument(
-        "--loss", required=True, type=str, help="cross entropy/focal")
-
     parser.add_argument(
         "--config-path", type=str, required=True, help="config path",
     )
@@ -95,7 +92,7 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
-    device = torch.device("cpu")
+    device = torch.device("cuda:0")
     dst_path, _ = weight_and_experiment(args.experiment_url)
     net = get_model(args)
     net.to(device)
@@ -106,8 +103,7 @@ if __name__ == '__main__':
     _, val_loader = get_dataloader(args)
     criterion = get_loss(args, device)
 
-    results = val(val_loader=val_loader, net=net, 
-                                        criterion=criterion, device=device)
+    results = val(val_loader=val_loader, net=net, device=device)
     
     results = sorted(results, key=operator.itemgetter(2))
     worst5 = results[:5]
