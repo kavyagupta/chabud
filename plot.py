@@ -47,8 +47,7 @@ def val(val_loader, net, device):
     # net.eval()
     results = []
     jaccard_index = JaccardIndex(task="binary", 
-                                 multidim_average="samplewise",
-                                 device=device)
+                                 multidim_average="samplewise").to(device)
 
     idx = 0
     for pre, post, mask in tqdm.tqdm(val_loader):
