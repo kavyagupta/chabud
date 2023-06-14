@@ -234,7 +234,7 @@ class SupervisedAttentionModule(nn.Module):
 
 
 class Decoder(nn.Module):
-    def __init__(self, mid_d=320):
+    def __init__(self, n_classes, mid_d=320):
         super(Decoder, self).__init__()
         self.mid_d = mid_d
         # fusion
@@ -256,7 +256,7 @@ class Decoder(nn.Module):
             nn.BatchNorm2d(self.mid_d),
             nn.ReLU(inplace=True)
         )
-        self.cls = nn.Conv2d(self.mid_d, 1, kernel_size=1)
+        self.cls = nn.Conv2d(self.mid_d, n_classes, kernel_size=1)
 
     def forward(self, d2, d3, d4, d5):
         # high-level
@@ -282,7 +282,7 @@ class BaseNet(nn.Module):
         self.mid_d = self.en_d * 2
         self.swa = NeighborFeatureAggregation(channles, self.mid_d)
         self.tfm = TemporalFusionModule(self.mid_d, self.en_d * 2)
-        self.decoder = Decoder(self.en_d * 2)
+        self.decoder = Decoder(n_classes, self.en_d * 2)
 
     def forward(self, x1, x2):
         # forward backbone resnet
