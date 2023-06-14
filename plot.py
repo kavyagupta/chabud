@@ -74,6 +74,10 @@ if __name__ == '__main__':
 
     parser.add_argument(
         "--experiment-url", type=str, required=True, help="url of the model")
+    parser.add_argument("--normalize", action='store_true', help="normalize")
+    parser.add_argument("--bands", default="0,1,2,3,4,5,6,7,8,9,10,11", 
+                        help="bands to use")
+    parser.add_argument("--swap", action='store_true', help="swap pre and post images")
 
     args = parser.parse_args()
 
