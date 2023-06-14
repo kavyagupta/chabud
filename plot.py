@@ -60,7 +60,7 @@ def val(val_loader, net, device):
         ious = ious.data.cpu().numpy()
 
         for i in range(pre.shape[0]):
-            results.append(val_loader.data_list[idx], 
+            results.append(val_loader.dataset.data_list[idx], 
                            outputs[i].astype(np.uint8),
                            ious[i])
             idx += 1
