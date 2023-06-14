@@ -1,4 +1,5 @@
 import os
+import json
 import tqdm 
 import argparse
 import operator
@@ -74,28 +75,15 @@ if __name__ == '__main__':
     parser.add_argument(
         "--experiment-url", type=str, required=True, help="url of the model")
 
-    # parser.add_argument(
-    #     "--data-path", type=str, required=True, help="folder to save the images")
-
-    parser.add_argument(
-        "--arch", type=str, required=True, help="model arch")
-    
-    parser.add_argument(
-        "--config-path", type=str, required=True, help="config path",
-    )
-    parser.add_argument(
-        "--data-root", default="./data", type=str, help="directory to save results",
-    )
-    parser.add_argument(
-        "--vector-dir", required=True, type=str, help="Name of the experiment (creates dir with this name in --result-dir)",
-    )
-    parser.add_argument("--bands", default="0,1,2,3,4,5,6,7,8,9,10,11", 
-                        help="bands to use")
-
     args = parser.parse_args()
 
     device = torch.device("cuda:0")
-    dst_path, _ = weight_and_experiment(args.experiment_url)
+    dst_path, _ = weight_and_experiment(args.experiment_url, best=True)
+    fin = open('/'.join(dst_path.split('/')[:-1]) + '/engine_config.json', 'r')
+    metadata = json.load(fin)
+    args.update(metadata)
+    fin.close()
+
     net = get_model(args)
     net.to(device)
     weight = torch.load(dst_path)

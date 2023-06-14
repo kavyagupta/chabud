@@ -15,5 +15,9 @@ def weight_and_experiment(url, best=False):
 
     dst_path = 'pretrain/' + '/'.join(checkpoint.replace('gs://', '').replace('s3://', '').split('/')[2:])
     os.system(f"gsutil -m cp -n -r {checkpoint} {dst_path} 2> /dev/null")
+
+    experiment_path = 'gs://' + '/'.join(checkpoint.replace('gs://', '').replace('s3://', '').split('/')[2:-1])
+    experiment_config_path = 'pretrain/' + '/'.join(checkpoint.replace('gs://', '').replace('s3://', '').split('/')[2:-1])
+    os.system(f"gsutil -m cp -n -r {experiment_path} {experiment_config_path} 2> /dev/null")
             
     return dst_path, experiment_id
