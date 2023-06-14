@@ -37,7 +37,9 @@ def train_one_epoch(train_loader, net, criterion,
         outputs, bands = net(pre, post)
         focal_loss = criterion(outputs, mask.long())
 
-        post[:, :, mask == 1] = pre[:, :, mask == 1]
+        post = post.permute(1, 0, 2, 3)
+        pre = pre.permute(1, 0, 2, 3)
+        post[:, mask == 1] = pre[:, mask == 1]
         mse_loss = nn.MSELoss(bands, post)
 
         loss = focal_loss + mse_loss 
@@ -68,6 +70,8 @@ def val(val_loader, net, criterion, device):
         outputs, bands = net(pre, post)
         focal_loss = criterion(outputs, mask.long())
 
+        post = post.permute(1, 0, 2, 3)
+        pre = pre.permute(1, 0, 2, 3)
         post[:, mask == 1] = pre[:, mask == 1]
         mse_loss = nn.MSELoss(bands, post)
 
