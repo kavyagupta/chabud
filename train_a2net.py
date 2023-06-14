@@ -36,9 +36,9 @@ def train_one_epoch(train_loader, net, criterion,
         optimizer.zero_grad()
         outputs, aux1, aux2, aux3 = net(pre, post)
         loss = criterion(outputs, mask.long()) + \
-               BCEDiceLoss(aux1, mask.long()) +\
-               BCEDiceLoss(aux2, mask.long()) +\
-               BCEDiceLoss(aux3, mask.long())
+               BCEDiceLoss(aux1, mask.unsqueeze(1).float()) +\
+               BCEDiceLoss(aux2, mask.unsqueeze(1).float()) +\
+               BCEDiceLoss(aux3, mask.unsqueeze(1).float())
 
         outputs = torch.argmax(outputs, axis=1)
         score = dice(outputs, mask)
@@ -65,9 +65,9 @@ def val(val_loader, net, criterion, device):
 
         outputs, aux1, aux2, aux3 = net(pre, post)
         loss = criterion(outputs, mask.long()) + \
-               BCEDiceLoss(aux1, mask.long()) +\
-               BCEDiceLoss(aux2, mask.long()) +\
-               BCEDiceLoss(aux3, mask.long())
+               BCEDiceLoss(aux1, mask.unsqueeze(1).float()) +\
+               BCEDiceLoss(aux2, mask.unsqueeze(1).float()) +\
+               BCEDiceLoss(aux3, mask.unsqueeze(1).float())
      
         outputs = torch.argmax(outputs, axis=1)
         score = dice(outputs, mask)
