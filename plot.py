@@ -41,7 +41,7 @@ def get_8bit(sample_pre, sample_post):
     post_bgr = np.asarray([post_b, post_g, post_r])
     pre_bgr = np.asarray([pre_b, pre_g, pre_r])
     
-    return pre_bgr.tranpose(1, 2, 0), post_bgr.tranpose(1, 2, 0)
+    return pre_bgr.transpose(1, 2, 0), post_bgr.transpose(1, 2, 0)
 
 
 def val(val_loader, net, device):
