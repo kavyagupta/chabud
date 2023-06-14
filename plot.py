@@ -1,11 +1,15 @@
 import os
+import io
 import json
 import tqdm 
 import argparse
 import operator
+import base64
 
 import cv2
+from PIL import Image
 import numpy as np
+import rasterio as rio
 import torch
 from torchmetrics.functional import dice
 from torchmetrics import JaccardIndex
@@ -17,7 +21,7 @@ from utils.loss import get_loss
 from utils.engine_hub import weight_and_experiment
 
 
-def save_img(sample_post, sample_pre):
+def get_8bit(sample_pre, sample_post):
     post_r = sample_post[1, :, :]
     post_g = sample_post[2, :, :]
     post_b = sample_post[3, :, :]
@@ -37,10 +41,7 @@ def save_img(sample_post, sample_pre):
     post_bgr = np.asarray([post_b, post_g, post_r])
     pre_bgr = np.asarray([pre_b, pre_g, pre_r])
     
-    cv2.imwrite('pre_img.png', pre_bgr)
-    cv2.imwrite('post_img.png', post_bgr)
-
-    return
+    return pre_bgr.tranpose(1, 2, 0), post_bgr.tranpose(1, 2, 0)
 
 
 def val(val_loader, net, device):
@@ -76,6 +77,8 @@ if __name__ == '__main__':
 
     parser.add_argument(
         "--experiment-url", type=str, required=True, help="url of the model")
+    parser.add_argument("--plot-dor", type=str, required=True)
+
     parser.add_argument("--normalize", action='store_true', help="normalize")
     parser.add_argument("--bands", default="0,1,2,3,4,5,6,7,8,9,10,11", 
                         help="bands to use")
@@ -101,6 +104,29 @@ if __name__ == '__main__':
     results = val(val_loader=val_loader, net=net, device=device)
     
     results = sorted(results, key=operator.itemgetter(2))
+
+    worst5 = results[:5]
+    best5 = results[-5:]
+
+    for best in best5:
+        fin = open(os.path.join(args.data_root, args.json_dir, 
+                                best[0]))
+        data = json.load(fin)
+        fin.close()
+
+        img_pre = rio.open(os.path.join(args.data_root,
+                                        data["images"][0]["file_name"])).read()
+        img_post = rio.open(os.path.join(args.data_root,
+                                         data["images"][1]["file_name"])).read()
+        mask_string = data["properties"][0]["labels"][0]
+        img_mask = np.array(Image.open(io.BytesIO(base64.b64decode(mask_string))))
+
+        img_mask = np.stack([img_mask, img_mask, img_mask]).transpose(1, 2, 0)
+        pred_mask = np.stack([best[1], best[1], best[1]]).transpose(1, 2, 0)
+
+        img_pre, img_post = get_8bit(img_pre, img_post)
+
+        print (img_mask.shape, pred_mask.shape, img_pre.shape, img_post.shape)
     
 
 
