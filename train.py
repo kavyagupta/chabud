@@ -105,7 +105,7 @@ def main():
         if 'state_dict' in weight:
             weight = weight['state_dict']
         model_dict = net.state_dict()
-        pretrained_dict = {k: v for k, v in weight.items() if k in model_dict}
+        pretrained_dict = {k: v for k, v in weight.items() if k in model_dict and v.shape == model_dict[k].shape}
         model_dict.update(pretrained_dict)
         net.load_state_dict(model_dict)
 
