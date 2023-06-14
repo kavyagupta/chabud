@@ -58,7 +58,7 @@ def val(val_loader, net, device):
         ious = multiclass_jaccard_index(outputs, mask, num_classes=2, average=None)
         outputs = outputs.data.cpu().numpy()
         ious = ious.data.cpu().numpy()
-        print (ious.shape)
+        print (ious)
 
         for i in range(pre.shape[0]):
             results.append([val_loader.dataset.data_list[idx], 
