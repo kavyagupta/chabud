@@ -51,11 +51,11 @@ def val(val_loader, net, device):
     idx = 0
     for pre, post, mask in tqdm.tqdm(val_loader):
         # get the inputs; data is a list of [inputs, labels]
-        pre, post, mask = pre.to(device), post.to(device), mask.to(device)
+        pre, post, mask = pre.to(device), post.to(device), mask.to(device).long()
 
         outputs = net(pre, post)
      
-        outputs = torch.argmax(outputs, axis=1)
+        outputs = torch.argmax(outputs, axis=1).long()
 
         for i in range(pre.shape[0]):
             iou = jaccard_index(outputs[i], mask[i])
