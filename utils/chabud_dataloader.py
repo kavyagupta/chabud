@@ -90,7 +90,7 @@ class ChabudDataset(data.Dataset):
         if self.swap and random.random() > 0.5:
             # swap pre post as a form of augmentation
             img_pre, img_post = img_post, img_pre
-            img_mask = np.zeros(img_mask.shape)
+            img_mask = np.zeros(img_mask.shape, dtype=np.uint8)
         
         if self.transform:
             transformed = self.transform(image = img_pre.transpose(1, 2, 0), 
