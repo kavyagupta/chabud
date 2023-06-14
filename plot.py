@@ -81,7 +81,7 @@ if __name__ == '__main__':
     dst_path, _ = weight_and_experiment(args.experiment_url, best=True)
     fin = open('/'.join(dst_path.split('/')[:-1]) + '/epxeriment_config.json', 'r')
     metadata = json.load(fin)
-    args.update(metadata)
+    args.__dict__.update(metadata)
     fin.close()
 
     net = get_model(args)
