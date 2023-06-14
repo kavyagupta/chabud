@@ -77,7 +77,7 @@ if __name__ == '__main__':
 
     parser.add_argument(
         "--experiment-url", type=str, required=True, help="url of the model")
-    parser.add_argument("--plot-dor", type=str, required=True)
+    parser.add_argument("--plot-dir", type=str, required=True)
 
     parser.add_argument("--normalize", action='store_true', help="normalize")
     parser.add_argument("--bands", default="0,1,2,3,4,5,6,7,8,9,10,11", 
