@@ -19,7 +19,7 @@ from models import get_model
 from utils.chabud_dataloader import get_dataloader
 from utils.args import parse_args
 from utils.engine_hub import weight_and_experiment
-from utils.loss import get_loss
+from utils.loss import get_loss, BCEDiceLoss
 
 
 def train_one_epoch(train_loader, net, criterion, 
@@ -36,9 +36,9 @@ def train_one_epoch(train_loader, net, criterion,
         optimizer.zero_grad()
         outputs, aux1, aux2, aux3 = net(pre, post)
         loss = criterion(outputs, mask.long()) + \
-               criterion(aux1, mask.long()) +\
-               criterion(aux2, mask.long()) +\
-               criterion(aux3, mask.long())
+               BCEDiceLoss(aux1, mask.long()) +\
+               BCEDiceLoss(aux2, mask.long()) +\
+               BCEDiceLoss(aux3, mask.long())
 
         outputs = torch.argmax(outputs, axis=1)
         score = dice(outputs, mask)
@@ -65,9 +65,9 @@ def val(val_loader, net, criterion, device):
 
         outputs, aux1, aux2, aux3 = net(pre, post)
         loss = criterion(outputs, mask.long()) + \
-               criterion(aux1, mask.long()) +\
-               criterion(aux2, mask.long()) +\
-               criterion(aux3, mask.long())
+               BCEDiceLoss(aux1, mask.long()) +\
+               BCEDiceLoss(aux2, mask.long()) +\
+               BCEDiceLoss(aux3, mask.long())
      
         outputs = torch.argmax(outputs, axis=1)
         score = dice(outputs, mask)
