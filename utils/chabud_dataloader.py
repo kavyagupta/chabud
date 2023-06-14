@@ -99,7 +99,7 @@ class ChabudDataset(data.Dataset):
 
 
 def get_dataloader(args):
-    args.bands = list(map(int, args.band.split(',')))
+    args.bands = list(map(int, args.bands.split(',')))
 
     f = open(f"{args.data_root}/{args.vector_dir}/metadata.json")
     data = json.load(f)
