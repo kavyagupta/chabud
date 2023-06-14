@@ -1,5 +1,6 @@
 import argparse
 import numpy as np
+import cv2
 
 import torch
 import os
@@ -8,6 +9,8 @@ from utils.chabud_dataloader import get_dataloader
 from utils.loss import get_loss
 
 from models import get_model
+from torchmetrics.functional import dice
+from torchmetrics.functional.classification import multiclass_jaccard_index
 
 
 try:
@@ -31,6 +34,32 @@ def _stretch_8bit(band, lower_percent=0, higher_percent=98):
     t[t < a] = a
     t[t > b] = b
     return t.astype(np.uint8)
+
+
+def save_img(sample_post, sample_pre):
+    post_r = sample_post[1, :, :]
+    post_g = sample_post[2, :, :]
+    post_b = sample_post[3, :, :]
+
+    pre_r = sample_pre[1, : ,:]
+    pre_g = sample_pre[2, :, :]
+    pre_b = sample_pre[3, :, :]
+
+    post_r = _stretch_8bit(post_r)
+    post_g = _stretch_8bit(post_g)
+    post_b = _stretch_8bit(post_b)
+
+    pre_r = _stretch_8bit(pre_r)
+    pre_g = _stretch_8bit(pre_g)
+    pre_b = _stretch_8bit(pre_b)
+
+    post_bgr = np.asarray([post_b, post_g, post_r])
+    pre_bgr = np.asarray([pre_b, pre_g, pre_r])
+    
+    cv2.imwrite('pre_img.png', pre_bgr)
+    cv2.imwrite('post_img.png', post_bgr)
+
+    return
 
 
 def weight_and_experiment(args):
@@ -74,7 +103,7 @@ def val(val_loader, net, criterion, device):
         running_score += score.item()
         running_iou += iou.item()
 
-    return running_loss, running_score, running_iou
+    return outputs, running_loss, running_score, running_iou
 
 
 if __name__ == '__main__':
@@ -105,32 +134,10 @@ if __name__ == '__main__':
     net.eval()
 
     _, val_loader = get_dataloader(args)
-
     criterion = get_loss(args, device)
 
-    
-    vloss, vscore, viou = val(val_loader=val_loader, net=net, 
+    outputs, vloss, vscore, viou = val(val_loader=val_loader, net=net, 
                                         criterion=criterion, device=device)
     
     sorted, indices = torch.sort(viou)
-
-    for 
-
-        post_r = sample_post[1, :, :]
-        post_g = sample_post[2, :, :]
-        post_b = sample_post[3, :, :]
-
-        pre_r = sample_pre[1, : ,:]
-        pre_g = sample_pre[2, :, :]
-        pre_b = sample_pre[3, :, :]
-
-        post_r = _stretch_8bit(post_r)
-        post_g = _stretch_8bit(post_g)
-        post_b = _stretch_8bit(post_b)
-
-        pre_r = _stretch_8bit(pre_r)
-        pre_g = _stretch_8bit(pre_g)
-        pre_b = _stretch_8bit(pre_b)
-
-        post_rgb = np.asarray([post_r, post_g, post_b])
-        pre_rgb = np.asarray([pre_r, pre_g, pre_b])
+        
