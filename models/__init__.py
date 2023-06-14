@@ -23,6 +23,9 @@ def get_model(args, n_channels=12, n_classes=2):
     elif args.arch == "bidate_concat":
         net = BiDateConcatNet(n_channels=n_channels, 
                               n_classes=n_classes)
+    elif args.arch == "bidate_concat_aux":
+        net = BiDateConcatNet(n_channels=n_channels, 
+                              n_classes=n_classes)
     elif args.arch == "bidate_deeplab_resnet50":
         net = bidate_deeplab_resnet50(n_channels=n_channels, 
                                       n_classes=n_classes)

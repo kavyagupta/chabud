@@ -147,7 +147,6 @@ def jaccard_loss(logits, target, eps=1e-7):
     jacc_loss = (intersection / (union + eps)).mean()
     return (1 - jacc_loss)
 
-
 def get_loss(args, device):
     if args.loss == "ce":
         criterion = nn.CrossEntropyLoss()
