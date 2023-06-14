@@ -274,7 +274,7 @@ class Decoder(nn.Module):
 
 
 class BaseNet(nn.Module):
-    def __init__(self, input_nc=3, output_nc=1):
+    def __init__(self, n_channels=3, n_classes=1):
         super(BaseNet, self).__init__()
         self.backbone = mobilenet_v2(pretrained=True)
         channles = [16, 24, 32, 96, 320]

@@ -94,6 +94,21 @@ class FocalLoss(nn.Module):
 
         return loss
     
+def BCEDiceLoss(inputs, targets):
+    # print(inputs.shape, targets.shape)
+    bce = F.binary_cross_entropy(inputs, targets)
+    inter = (inputs * targets).sum()
+    eps = 1e-5
+    dice = (2 * inter + eps) / (inputs.sum() + targets.sum() + eps)
+    # print(bce.item(), inter.item(), inputs.sum().item(), dice.item())
+    return bce + 1 - dice
+
+
+def BCE(inputs, targets):
+    # print(inputs.shape, targets.shape)
+    bce = F.binary_cross_entropy(inputs, targets)
+    return bce
+
 
 def get_loss(args, device):
     if args.loss == "ce":
@@ -103,6 +118,8 @@ def get_loss(args, device):
         criterion = FocalLoss(args.alpha, args.gamma)
     elif args.loss == 'mse':
         criterion = nn.MSELoss()
+    elif args.loss == 'bce_dice':
+        criterion = BCEDiceLoss
     else:
         print("Loss not found")
         return

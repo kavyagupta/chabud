@@ -43,6 +43,8 @@ def parse_args():
     
     # Data
     parser.add_argument("--normalize", action='store_true', help="normalize")
+    parser.add_argument("--bands", default="0,1,2,3,4,5,6,7,8,9,10,11", 
+                        help="bands to use")
     parser.add_argument(
         "--batch-size",
         type=int,

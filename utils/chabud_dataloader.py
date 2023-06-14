@@ -14,11 +14,44 @@ from torch.utils.data import DataLoader
 import albumentations as A
 
 
+def _stretch_8bit(band, lower_percent=0, higher_percent=98):
+    """Serves `stretch_bands` by clipping extreme numbers and stretching 1 band.
+    Parameters
+    ----------
+    band : np.ndarray
+        A single band (h,w)
+    lower_percent : integer
+        Lower percentile to clip from image
+    higher_percent : type
+        Higher percentile to clip from image
+    Returns
+    -------
+    np.ndarray
+        (H, W) stretched band with same dimensions as input band
+    """
+    a = 0
+    b = 255
+    real_values = band.flatten()
+    # real_values = real_values[real_values > 0]
+
+    c = np.percentile(real_values, lower_percent)
+    d = np.percentile(real_values, higher_percent)
+    if (d - c) == 0:
+        d += 1
+    t = a + (band - c) * ((b - a) / (d - c))
+    t[t < a] = a
+    t[t > b] = b
+    return t.astype(np.uint8)
+
+
 class ChabudDataset(data.Dataset):
-    def __init__(self, data_root, json_dir, data_list, transform = None):
+    def __init__(self, data_root, json_dir, data_list, bands, 
+                 bit8=False, transform = None):
         self.data_root = data_root
         self.json_dir = json_dir
         self.data_list = data_list
+        self.bands = bands
+        self.bit8 = bit8
         self.transform = transform
 
     def __len__(self):
@@ -39,9 +72,15 @@ class ChabudDataset(data.Dataset):
 
         pre = []
         post = []
-        for i in range(img_pre.shape[0]):
-            pre.append(cv2.resize(img_pre[i], (512, 512), interpolation=cv2.INTER_CUBIC))
-            post.append(cv2.resize(img_post[i], (512, 512), interpolation=cv2.INTER_CUBIC))
+        for band_idx in self.bands:
+            img = cv2.resize(img_pre[band_idx], (512, 512), interpolation=cv2.INTER_CUBIC)
+            if self.bit8:
+                img = _stretch_8bit(img) / 255.
+            pre.append(img)
+            im = cv2.resize(img_post[band_idx], (512, 512), interpolation=cv2.INTER_CUBIC)
+            if self.bit8:
+                img = _stretch_8bit(img) / 255.
+            post.append(img)
 
         img_pre = np.asarray(pre)
         img_post = np.asarray(post)
@@ -60,22 +99,34 @@ class ChabudDataset(data.Dataset):
 
 
 def get_dataloader(args):
+    args.bands = list(map(int, args.band.split(',')))
 
     f = open(f"{args.data_root}/{args.vector_dir}/metadata.json")
     data = json.load(f)
     train_list = data["dataset"]["train"]
     val_list = data["dataset"]["val"]
 
-    mean=[1353.72692573, 1117.20229235, 1041.88472484,  946.55425487,
-        1199.1886645 , 2003.00679994, 2374.00844442, 2301.22043839,
-        732.18195008,   12.09952762, 1118.20272293, 2599.78293726]
-    std=[ 72.41170098, 146.47166895, 158.20546468, 217.42332058,
-            168.33411967, 230.56343772, 296.15066586, 307.65398036,
-            85.71403735,   0.8560447, 221.18654082, 329.1786173 ]
+
+    if args.bands == [1, 2, 3]:
+        mean_bands = [0.406, 0.456, 0.485]
+        std_bands = [0.225, 0.224, 0.229]
+    else:
+        mean=[1353.72692573, 1117.20229235, 1041.88472484,  946.55425487,
+            1199.1886645 , 2003.00679994, 2374.00844442, 2301.22043839,
+            732.18195008,   12.09952762, 1118.20272293, 2599.78293726]
+        std=[ 72.41170098, 146.47166895, 158.20546468, 217.42332058,
+                168.33411967, 230.56343772, 296.15066586, 307.65398036,
+                85.71403735,   0.8560447, 221.18654082, 329.1786173 ]
+
+        mean_bands = []
+        std_bands = []
+        for i in args.bands:
+            mean_bands.append(mean[i])
+            std_bands.append(std[i])
 
     pipeline = []
     if args.normalize:
-        pipeline.append(A.Normalize(mean=mean, std=std))
+        pipeline.append(A.Normalize(mean=mean_bands, std=std_bands))
 
     transform_train = A.Compose([A.OneOf([
                                     A.RandomSizedCrop(min_max_height=(256, 512), height=512, width=512, p=0.5),
@@ -100,13 +151,15 @@ def get_dataloader(args):
         data_root=args.data_root,
         json_dir=args.vector_dir,
         data_list=train_list,
-        transform = transform_train
+        bands=args.bands,
+        transform=transform_train
     )
 
     chabud_val = ChabudDataset(
         data_root=args.data_root,
         json_dir=args.vector_dir,
         data_list=val_list,
+        bands=args.bands,
         transform=transform_val
     )
 

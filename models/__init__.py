@@ -6,6 +6,7 @@ from .bidate_concat import BiDateConcatNet
 from .bidate_deeplab import (bidate_deeplab_resnet50,
                              bidate_deeplab_resnet101,
                              bidate_deeplab_mobilenet_v3_large)
+from .a2net import BaseNet
 from utils.engine_hub import weight_and_experiment
 
 __all__ = ["get_model"]
@@ -31,6 +32,9 @@ def get_model(args, n_channels=12, n_classes=2):
     elif args.arch == "bidate_deeplab_mobilenet_v3_large":
         net = bidate_deeplab_mobilenet_v3_large(n_channels=n_channels, 
                                                 n_classes=n_classes)
+    elif args.arch == "a2net":
+        assert args.loss == 'bce_dice', "please use bce_dice loss for this architecture"
+        net = BaseNet(n_channels=n_channels, n_classes=1)
     else:
         print ("Proper architecture name not passed")
         return 
