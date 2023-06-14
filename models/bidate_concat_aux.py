@@ -4,9 +4,9 @@ import torch.nn as nn
 from models.unet_parts import down, outconv, up, inconv
 
 
-class BiDateConcatNet(nn.Module):
+class BiDateConcatNetAux(nn.Module):
     def __init__(self, n_channels, n_classes):
-        super(BiDateConcatNet, self).__init__()
+        super(BiDateConcatNetAux, self).__init__()
         self.inc = inconv(n_channels, 64)
         self.down1 = down(64, 128)
         self.down2 = down(128, 256)
