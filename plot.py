@@ -95,7 +95,6 @@ if __name__ == '__main__':
     net.eval()
 
     _, val_loader = get_dataloader(args)
-    criterion = get_loss(args, device)
 
     results = val(val_loader=val_loader, net=net, device=device)
     
