@@ -46,8 +46,7 @@ def save_img(sample_post, sample_pre):
 def val(val_loader, net, device):
     # net.eval()
     results = []
-    jaccard_index = JaccardIndex(task="binary", 
-                                 multidim_average="samplewise").to(device)
+    jaccard_index = JaccardIndex(task="binary").to(device)
 
     idx = 0
     for pre, post, mask in tqdm.tqdm(val_loader):
@@ -57,15 +56,12 @@ def val(val_loader, net, device):
         outputs = net(pre, post)
      
         outputs = torch.argmax(outputs, axis=1)
-        ious = jaccard_index(outputs, mask)
-        outputs = outputs.data.cpu().numpy()
-        ious = ious.data.cpu().numpy()
-        print (ious)
 
         for i in range(pre.shape[0]):
+            iou = jaccard_index(outputs[i], mask[i])
             results.append([val_loader.dataset.data_list[idx], 
-                           outputs[i].astype(np.uint8),
-                           ious[i]])
+                           outputs[i].data.cpu().numpy().astype(np.uint8),
+                           iou.item()])
             idx += 1
 
     return results
