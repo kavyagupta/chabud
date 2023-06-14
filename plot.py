@@ -48,7 +48,7 @@ def val(val_loader, net, device):
     results = []
 
     idx = 0
-    for pre, post, mask in tqdm(val_loader):
+    for pre, post, mask in tqdm.tqdm(val_loader):
         # get the inputs; data is a list of [inputs, labels]
         pre, post, mask = pre.to(device), post.to(device), mask.to(device)
 
