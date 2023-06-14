@@ -35,13 +35,12 @@ def train_one_epoch(train_loader, net, criterion,
         # zero the parameter gradients
         optimizer.zero_grad()
         outputs, aux1, aux2, aux3 = net(pre, post)
-        mask = mask.unsqueeze(1)
         loss = criterion(outputs, mask.float()) + \
                criterion(aux1, mask.float()) +\
                criterion(aux2, mask.float()) +\
                criterion(aux3, mask.float())
 
-        outputs = torch.where(outputs > 0.5, torch.ones_like(outputs), torch.zeros_like(outputs)).long()
+        outputs = torch.argmax(outputs, axis=1)
         score = dice(outputs, mask)
         iou = multiclass_jaccard_index(outputs, mask, num_classes=2)
         loss.backward()
@@ -65,13 +64,12 @@ def val(val_loader, net, criterion, device):
         pre, post, mask = pre.to(device), post.to(device), mask.to(device)
 
         outputs, aux1, aux2, aux3 = net(pre, post)
-        mask = mask.unsqueeze(1)
         loss = criterion(outputs, mask.float()) + \
                criterion(aux1, mask.float()) +\
                criterion(aux2, mask.float()) +\
                criterion(aux3, mask.float())
      
-        outputs = torch.where(outputs > 0.5, torch.ones_like(outputs), torch.zeros_like(outputs)).long()
+        outputs = torch.argmax(outputs, axis=1)
         score = dice(outputs, mask)
         iou = multiclass_jaccard_index(outputs, mask, num_classes=2)
         

@@ -33,8 +33,7 @@ def get_model(args, n_channels=12, n_classes=2):
         net = bidate_deeplab_mobilenet_v3_large(n_channels=n_channels, 
                                                 n_classes=n_classes)
     elif args.arch == "a2net":
-        assert args.loss == 'bce_dice', "please use bce_dice loss for this architecture"
-        net = BaseNet(n_channels=n_channels, n_classes=1)
+        net = BaseNet(n_channels=n_channels, n_classes=n_classes)
     else:
         print ("Proper architecture name not passed")
         return 
