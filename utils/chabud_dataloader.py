@@ -70,7 +70,7 @@ class ChabudDataset(data.Dataset):
         
         if self.data_list[idx] in self.data:
             img_pre = self.data[self.data_list[idx]]['pre']
-            img_post = self.data[self.data_list][idx]['post']
+            img_post = self.data[self.data_list[idx]]['post']
             img_mask = self.data[self.data_list[idx]]['mask']
         else:
             img_pre = rio.open(os.path.join(self.data_root,
