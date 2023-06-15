@@ -3,6 +3,7 @@ import json
 from tqdm import tqdm
 from datetime import datetime
 
+import numpy as np
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -23,9 +24,7 @@ from utils.loss import get_loss
 
 def train_one_epoch(train_loader, net, criterion, 
                     optimizer, device):
-    running_loss = 0.0
-    running_score = 0.0
-    running_iou = 0.0
+    losses = []
 
     dice = Dice(average="micro").to(device)
     jaccard_index = JaccardIndex(task="binary").to(device)
@@ -45,18 +44,17 @@ def train_one_epoch(train_loader, net, criterion,
         loss.backward()
         optimizer.step()
 
-        running_loss += loss.item()
-        running_score += score.item()
-        running_iou += iou.item()
+        losses.append(loss.item())
 
-    return running_loss / len(train_loader), running_score / len(train_loader), running_iou / len(train_loader)
+    score = dice.compute()
+    iou = jaccard_index.compute()
+
+    return np.mean(losses), score, iou
 
 def val(val_loader, net, criterion, device):
     # net.eval()
 
-    running_loss = 0.0
-    running_score = 0.0
-    running_iou = 0.0
+    losses = []
 
     dice = Dice(average="micro").to(device)
     jaccard_index = JaccardIndex(task="binary").to(device)
@@ -72,11 +70,12 @@ def val(val_loader, net, criterion, device):
         score = dice(outputs, mask)
         iou = jaccard_index(outputs, mask)
         
-        running_loss += loss.item()
-        running_score += score.item()
-        running_iou += iou.item()
+        losses.append(loss.item())
 
-    return running_loss / len(val_loader), running_score / len(val_loader), running_iou / len(val_loader)
+    score = dice.compute()
+    iou = jaccard_index.compute()
+
+    return np.mean(losses), score, iou
 
 
 
