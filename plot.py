@@ -70,6 +70,31 @@ def val(val_loader, net, device):
 
     return results
 
+def make_image(args, sample):
+    fin = open(os.path.join(args.data_root, args.vector_dir, 
+                                sample[0]))
+    data = json.load(fin)
+    fin.close()
+
+    img_pre = rio.open(os.path.join(args.data_root,
+                                    data["images"][0]["file_name"])).read()
+    img_post = rio.open(os.path.join(args.data_root,
+                                        data["images"][1]["file_name"])).read()
+    mask_string = data["properties"][0]["labels"][0]
+    img_mask = np.array(Image.open(io.BytesIO(base64.b64decode(mask_string))))
+
+    img_mask = np.stack([img_mask, img_mask, img_mask]).transpose(1, 2, 0)
+    pred_mask = np.stack([sample[1], sample[1], sample[1]]).transpose(1, 2, 0)
+
+    img_pre, img_post = get_8bit(img_pre, img_post)
+    padding = np.stack([np.ones((20, 512), dtype=np.uint8)*128,
+                        np.ones((20, 512), dtype=np.uint8)*128,
+                        np.ones((20, 512), dtype=np.uint8)*128]).transpose(2, 0, 1)
+    rgb = np.stack([img_pre, padding, img_post], axis=0)
+    mask = np.stack([img_mask * 255, padding, pred_mask * 255], axis=0)
+    out = np.stack([rgb, mask], axis=1)
+
+    return out 
 
 if __name__ == '__main__':
 
@@ -77,6 +102,7 @@ if __name__ == '__main__':
 
     parser.add_argument(
         "--experiment-url", type=str, required=True, help="url of the model")
+    parser.add_argument("--num-plots", default=5, type=int)
     parser.add_argument("--plot-dir", type=str, required=True)
 
     parser.add_argument("--normalize", action='store_true', help="normalize")
@@ -105,38 +131,19 @@ if __name__ == '__main__':
     
     results = sorted(results, key=operator.itemgetter(2))
 
-    worst5 = results[:5]
-    best5 = results[-5:]
+    worst5 = results[:args.num_plots]
+    best5 = results[-1 * args.num_plots:]
 
     if not os.path.exists(f"plots/{args.plot_dir}/"):
         os.makedirs(f"plots/{args.plot_dir}/")
 
     for idx, best in enumerate(best5):
-        print (best[0])
-        fin = open(os.path.join(args.data_root, args.vector_dir, 
-                                best[0]))
-        data = json.load(fin)
-        fin.close()
+        out = make_image(args, best)
+        cv2.imwrite(f"plots/{args.plot_dir}/best{idx}.png", out)
 
-        # print (data, best[0])
-
-        img_pre = rio.open(os.path.join(args.data_root,
-                                        data["images"][0]["file_name"])).read()
-        img_post = rio.open(os.path.join(args.data_root,
-                                         data["images"][1]["file_name"])).read()
-        mask_string = data["properties"][0]["labels"][0]
-        img_mask = np.array(Image.open(io.BytesIO(base64.b64decode(mask_string))))
-
-        img_mask = np.stack([img_mask, img_mask, img_mask]).transpose(1, 2, 0)
-        pred_mask = np.stack([best[1], best[1], best[1]]).transpose(1, 2, 0)
-
-        img_pre, img_post = get_8bit(img_pre, img_post)
-        
-
-        cv2.imwrite(f"plots/{args.plot_dir}/best{idx}_img_pre.png", img_pre)
-        cv2.imwrite(f"plots/{args.plot_dir}/best{idx}_img_post.png", img_post)
-        cv2.imwrite(f"plots/{args.plot_dir}/best{idx}_pred.png", img_mask * 255)
-        cv2.imwrite(f"plots/{args.plot_dir}/best{idx}_mask.png", pred_mask * 255)
+    for idx, worst in enumerate(worst5):
+        out = make_image(args, worst)
+        cv2.imwrite(f"plots/{args.plot_dir}/worst{idx}.png", out)
     
 
 
