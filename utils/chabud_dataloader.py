@@ -75,14 +75,12 @@ class ChabudDataset(data.Dataset):
         pre = []
         post = []
         for band_idx in self.bands:
-            img = cv2.resize(img_pre[band_idx], (512, 512), interpolation=cv2.INTER_CUBIC)
             if self.bit8:
-                img = _stretch_8bit(img) / 255.
-            pre.append(img)
-            im = cv2.resize(img_post[band_idx], (512, 512), interpolation=cv2.INTER_CUBIC)
+                band_pre = _stretch_8bit(img_pre[band_idx]) / 255.
+            pre.append(band_pre)
             if self.bit8:
-                img = _stretch_8bit(img) / 255.
-            post.append(img)
+                band_post = _stretch_8bit(img_pre[band_idx]) / 255.
+            post.append(band_post)
 
         img_pre = np.asarray(pre)
         img_post = np.asarray(post)
