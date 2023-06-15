@@ -47,7 +47,7 @@ def _stretch_8bit(band, lower_percent=0, higher_percent=98):
 
 class ChabudDataset(data.Dataset):
     def __init__(self, data_root, json_dir, data_list, bands, 
-                 bit8=False, swap=False, transform = None):
+                 bit8=False, swap=False, full_load=False, transform = None):
         self.data_root = data_root
         self.json_dir = json_dir
         self.data_list = data_list
@@ -55,6 +55,8 @@ class ChabudDataset(data.Dataset):
         self.bit8 = bit8
         self.swap = swap
         self.transform = transform
+        self.full_load = full_load
+        self.data = {}
 
     def __len__(self):
         return len(self.data_list)
@@ -65,13 +67,22 @@ class ChabudDataset(data.Dataset):
         data = json.load(fin)
         fin.close()
 
-        img_pre = rio.open(os.path.join(self.data_root,
-                                        data["images"][0]["file_name"])).read()
-        img_post = rio.open(os.path.join(self.data_root,
-                                         data["images"][1]["file_name"])).read()
-        mask_string = data["properties"][0]["labels"][0]
-        img_mask = np.array(Image.open(io.BytesIO(base64.b64decode(mask_string))))
-
+        
+        if self.data_list[idx] in self.data:
+            img_pre = self.data[self.data_list[idx]]['pre']
+            img_post = self.data[self.data_list][idx]['post']
+            img_mask = self.data[self.data_list[idx]]['mask']
+        else:
+            img_pre = rio.open(os.path.join(self.data_root,
+                                            data["images"][0]["file_name"])).read()
+            img_post = rio.open(os.path.join(self.data_root,
+                                            data["images"][1]["file_name"])).read()
+            mask_string = data["properties"][0]["labels"][0]
+            img_mask = np.array(Image.open(io.BytesIO(base64.b64decode(mask_string))))
+            if self.full_load:
+                self.data[self.data_list[idx]] = {"pre": img_pre,
+                                                  "post": img_post,
+                                                  "mask": img_mask}
         pre = []
         post = []
         for band_idx in self.bands:
@@ -167,6 +178,7 @@ def get_dataloader(args):
         bands=args.bands,
         bit8=bit8,
         swap=args.swap,
+        full_load=args.full_load,
         transform=transform_train
     )
 
@@ -176,6 +188,7 @@ def get_dataloader(args):
         data_list=val_list,
         bands=args.bands,
         bit8=bit8,
+        full_load=args.full_load,
         transform=transform_val
     )
 

@@ -42,6 +42,7 @@ def parse_args():
     parser.add_argument("--optim", default="sgd", help="optimizer sgd/adam")
     
     # Data
+    parser.add_argument("--full-load", action='store_true', help="store all data in ram")
     parser.add_argument("--normalize", action='store_true', help="normalize")
     parser.add_argument("--bands", default="0,1,2,3,4,5,6,7,8,9,10,11", 
                         help="bands to use")
