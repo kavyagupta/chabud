@@ -75,11 +75,14 @@ class ChabudDataset(data.Dataset):
         pre = []
         post = []
         for band_idx in self.bands:
+            band_pre = img_pre[band_idx]
             if self.bit8:
-                band_pre = _stretch_8bit(img_pre[band_idx]) / 255.
+                band_pre = _stretch_8bit(band_pre) / 255.
             pre.append(band_pre)
+
+            band_post = img_post[band_idx]
             if self.bit8:
-                band_post = _stretch_8bit(img_pre[band_idx]) / 255.
+                band_post = _stretch_8bit(band_post) / 255.
             post.append(band_post)
 
         img_pre = np.asarray(pre)
