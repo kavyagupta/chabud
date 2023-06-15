@@ -90,7 +90,6 @@ def make_image(args, sample):
     padding = np.stack([np.ones((20, 512), dtype=np.uint8)*128,
                         np.ones((20, 512), dtype=np.uint8)*128,
                         np.ones((20, 512), dtype=np.uint8)*128]).transpose(1, 2, 0)
-    print (padding.shape, img_pre.shape, img_post.shape)
     rgb = np.concatenate([img_pre, padding, img_post], axis=0)
     mask = np.concatenate([img_mask * 255, padding, pred_mask * 255], axis=0)
     out = np.concatenate([rgb, mask], axis=1)
