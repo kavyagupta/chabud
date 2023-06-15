@@ -26,7 +26,7 @@ def get_8bit(sample_pre, sample_post):
     post_g = sample_post[2, :, :]
     post_b = sample_post[3, :, :]
 
-    pre_r = sample_pre[1, : ,:]
+    pre_r = sample_pre[1, :, :]
     pre_g = sample_pre[2, :, :]
     pre_b = sample_pre[3, :, :]
 
