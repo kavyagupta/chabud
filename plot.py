@@ -137,7 +137,15 @@ if __name__ == '__main__':
     if not os.path.exists(f"plots/{args.plot_dir}/"):
         os.makedirs(f"plots/{args.plot_dir}/")
 
-    
+    for idx, best in enumerate(best5):
+        print (best[0])
+        out = make_image(args, best)
+        cv2.imwrite(f"plots/{args.plot_dir}/best{idx}.png", out)
+
+    for idx, worst in enumerate(worst5):
+        print (worst[0])
+        out = make_image(args, worst)
+        cv2.imwrite(f"plots/{args.plot_dir}/worst{idx}.png", out)
     
 
 
