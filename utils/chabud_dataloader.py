@@ -139,18 +139,19 @@ def get_dataloader(args):
     if args.normalize:
         pipeline.append(A.Normalize(mean=mean_bands, std=std_bands))
 
-    transform_train = A.Compose([A.OneOf([
-                                    A.RandomSizedCrop(min_max_height=(300, 512), height=512, width=512, p=0.5),
-                                    A.PadIfNeeded(min_height=300, min_width=300, p=0.5)
-                                ], p=0.8),
+    transform_train = A.Compose([
+                                # A.OneOf([
+                                #     A.RandomSizedCrop(min_max_height=(300, 512), height=512, width=512, p=0.5),
+                                #     A.PadIfNeeded(min_height=300, min_width=300, p=0.5)
+                                # ], p=0.8),
                                 A.HorizontalFlip(p=0.5), 
                                 A.VerticalFlip(p=0.5),
                                 A.RandomBrightnessContrast(p=0.3), 
-                                A.OneOf([
-                                    A.ElasticTransform(p=0.5, alpha=120, sigma=120 * 0.05, alpha_affine=120 * 0.03),
-                                    A.GridDistortion(p=0.5),
-                                    A.OpticalDistortion(distort_limit=1, shift_limit=0.5, p=1),
-                                    ], p=0.8),
+                                # A.OneOf([
+                                #     A.ElasticTransform(p=0.5, alpha=120, sigma=120 * 0.05, alpha_affine=120 * 0.03),
+                                #     A.GridDistortion(p=0.5),
+                                #     A.OpticalDistortion(distort_limit=1, shift_limit=0.5, p=1),
+                                #     ], p=0.8),
                                 A.Resize(args.window, args.window)
                               ] + pipeline,
                               additional_targets={'post': 'image'})
