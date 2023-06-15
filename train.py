@@ -49,7 +49,7 @@ def train_one_epoch(train_loader, net, criterion,
     score = dice.compute()
     iou = jaccard_index.compute()
 
-    return np.mean(losses), score, iou
+    return np.mean(losses), score.item(), iou.item()
 
 def val(val_loader, net, criterion, device):
     # net.eval()
@@ -75,7 +75,7 @@ def val(val_loader, net, criterion, device):
     score = dice.compute()
     iou = jaccard_index.compute()
 
-    return np.mean(losses), score, iou
+    return np.mean(losses), score.item(), iou.item()
 
 
 
