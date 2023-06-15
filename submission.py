@@ -1,19 +1,20 @@
-import numpy as np
-import pandas as pd
-import h5py
-
-from trimesh.voxel.runlength import dense_to_brle
+import json 
+import argparse
 from pathlib import Path
 from collections import defaultdict
+from typing import Any, Union, Dict, Literal
 
-import argparse
+from trimesh.voxel.runlength import dense_to_brle
 
+import h5py
+import pandas as pd
+
+import numpy as np
+from numpy.typing import NDArray
 import torch
 
-from typing import Any, Union, Dict, Literal
-from numpy.typing import NDArray
-
 from models import get_model
+from utils.engine_hub import weight_and_experiment
     
 
 def retrieve_validation_fold(path: Union[str, Path]) -> Dict[str, NDArray]:
@@ -40,13 +41,10 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Model Testing")
 
     parser.add_argument(
-        "--weight-file", type=str, required=True, help="weight file")
+        "--experiment-url", type=str, required=True, help="url of the model")
 
     parser.add_argument(
         "--data-path", type=str, required=True, help="data-path")
-
-    parser.add_argument(
-        "--arch", type=str, required=True, help="model arch")
 
     parser.add_argument(
         "--csv-name", type=str, required=True, help="prediction csv name")
@@ -55,6 +53,11 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     device = torch.device("cuda:0")
+    dst_path, _ = weight_and_experiment(args.experiment_url, best=True)
+    fin = open('/'.join(dst_path.split('/')[:-1]) + '/epxeriment_config.json', 'r')
+    metadata = json.load(fin)
+    args.__dict__.update(metadata)
+    fin.close()
 
     validation_fold = retrieve_validation_fold(args.data_path)
 
