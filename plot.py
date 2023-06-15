@@ -87,9 +87,9 @@ def make_image(args, sample):
     pred_mask = np.stack([sample[1], sample[1], sample[1]]).transpose(1, 2, 0)
 
     img_pre, img_post = get_8bit(img_pre, img_post)
-    padding = np.stack([np.ones((20, 512), dtype=np.uint8)*128,
-                        np.ones((20, 512), dtype=np.uint8)*128,
-                        np.ones((20, 512), dtype=np.uint8)*128]).transpose(2, 0, 1)
+    padding = np.stack([np.ones((512, 20), dtype=np.uint8)*128,
+                        np.ones((512, 20), dtype=np.uint8)*128,
+                        np.ones((512, 20), dtype=np.uint8)*128]).transpose(2, 0, 1)
     rgb = np.stack([img_pre, padding, img_post], axis=0)
     mask = np.stack([img_mask * 255, padding, pred_mask * 255], axis=0)
     out = np.stack([rgb, mask], axis=1)
