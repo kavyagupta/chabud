@@ -9,8 +9,7 @@ import torch.optim as optim
 from torch.optim.lr_scheduler import MultiStepLR, ReduceLROnPlateau
 import torch.nn.functional as F
 
-from torchmetrics.functional import dice
-from torchmetrics.functional.classification import multiclass_jaccard_index
+from torchmetrics import Dice, JaccardIndex
 
 
 from engine import Engine
@@ -28,6 +27,9 @@ def train_one_epoch(train_loader, net, criterion,
     running_score = 0.0
     running_iou = 0.0
 
+    dice = Dice(average="micro").to(device)
+    jaccard_index = JaccardIndex(task="binary").to(device)
+
     for pre, post, mask in tqdm(train_loader):
         # get the inputs; data is a list of [inputs, labels]
         pre, post, mask = pre.to(device), post.to(device), mask.to(device)
@@ -39,7 +41,7 @@ def train_one_epoch(train_loader, net, criterion,
 
         outputs = torch.argmax(outputs, axis=1)
         score = dice(outputs, mask)
-        iou = multiclass_jaccard_index(outputs, mask, num_classes=2)
+        iou = jaccard_index(outputs, mask)
         loss.backward()
         optimizer.step()
 
@@ -56,6 +58,9 @@ def val(val_loader, net, criterion, device):
     running_score = 0.0
     running_iou = 0.0
 
+    dice = Dice(average="micro").to(device)
+    jaccard_index = JaccardIndex(task="binary").to(device)
+
     for pre, post, mask in tqdm(val_loader):
         # get the inputs; data is a list of [inputs, labels]
         pre, post, mask = pre.to(device), post.to(device), mask.to(device)
@@ -65,7 +70,7 @@ def val(val_loader, net, criterion, device):
      
         outputs = torch.argmax(outputs, axis=1)
         score = dice(outputs, mask)
-        iou = multiclass_jaccard_index(outputs, mask, num_classes=2)
+        iou = jaccard_index(outputs, mask)
         
         running_loss += loss.item()
         running_score += score.item()

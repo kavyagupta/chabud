@@ -31,16 +31,11 @@ def train_one_epoch(train_loader, net, criterion,
     for pre, post, mask in tqdm(train_loader):
         # get the inputs; data is a list of [inputs, labels]
         pre, post, mask = pre.to(device), post.to(device), mask.to(device)
-
+        
         # zero the parameter gradients
         optimizer.zero_grad()
         outputs, bands = net(pre, post)
         focal_loss = criterion(outputs, mask.long())
-
-        post = post.permute(1, 0, 2, 3)
-        pre = pre.permute(1, 0, 2, 3)
-        post[:, mask == 1] = pre[:, mask == 1]
-        post = post.permute(1, 0, 2, 3).copy()
         mse_loss = nn.MSELoss()(bands, post)
 
         loss = focal_loss + mse_loss 
@@ -64,18 +59,14 @@ def val(val_loader, net, criterion, device):
     running_score = 0.0
     running_iou = 0.0
 
-    for pre, post, mask in tqdm(val_loader):
+    for pre, post, mask, target_bands in tqdm(val_loader):
         # get the inputs; data is a list of [inputs, labels]
-        pre, post, mask = pre.to(device), post.to(device), mask.to(device)
+        pre, post = pre.to(device), post.to(device)
+        mask, target_bands = mask.to(device), target_bands.to(device)
 
         outputs, bands = net(pre, post)
         focal_loss = criterion(outputs, mask.long())
-
-        post = post.permute(1, 0, 2, 3)
-        pre = pre.permute(1, 0, 2, 3)
-        post[:, mask == 1] = pre[:, mask == 1]
-        post = post.permute(1, 0, 2, 3).copy()
-        mse_loss = nn.MSELoss()(bands, post)
+        mse_loss = nn.MSELoss()(bands, target_bands)
 
         loss = focal_loss + mse_loss 
      
