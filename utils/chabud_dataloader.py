@@ -152,10 +152,10 @@ def get_dataloader(args):
         pipeline.append(A.Normalize(mean=mean_bands, std=std_bands))
 
     transform_train = A.Compose([
-                                # A.OneOf([
-                                #     A.RandomSizedCrop(min_max_height=(300, 512), height=512, width=512, p=0.5),
-                                #     A.PadIfNeeded(min_height=300, min_width=300, p=0.5)
-                                # ], p=0.8),
+                                A.OneOf([
+                                    A.RandomSizedCrop(min_max_height=(300, 512), height=512, width=512, p=0.5),
+                                    A.PadIfNeeded(min_height=300, min_width=300, p=0.5)
+                                ], p=0.8),
                                 A.HorizontalFlip(p=0.5), 
                                 A.VerticalFlip(p=0.5),
                                 A.RandomBrightnessContrast(p=0.3), 
