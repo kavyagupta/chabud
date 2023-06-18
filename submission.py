@@ -1,5 +1,6 @@
 import os 
 import json 
+import tqdm
 import argparse
 from pathlib import Path
 from collections import defaultdict
@@ -154,7 +155,7 @@ if __name__ == '__main__':
     if not os.path.exists(out_path):
         os.makedirs(out_path)
 
-    for uuid in validation_fold:
+    for uuid in tqdm.tqdm(validation_fold):
         input_images = validation_fold[uuid]
 
         # perform the prediction
