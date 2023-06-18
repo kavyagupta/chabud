@@ -15,6 +15,8 @@ import numpy as np
 from numpy.typing import NDArray
 import torch
 import albumentations as A
+from skimage import measure
+from shapely.geometry import Polygon
 
 from models import get_model
 from utils.engine_hub import weight_and_experiment
@@ -163,12 +165,21 @@ if __name__ == '__main__':
         post = torch.from_numpy(input_images['post']).to(device).float().unsqueeze(0)
         predicted = model(pre, post)
         predicted = torch.argmax(predicted, axis=1)
-        predicted = predicted.data.cpu().numpy()
+        predicted = predicted.data.cpu().numpy()[0]
 
-        cv2.imwrite(f"{out_path}/{uuid}.png", predicted[0].astype(np.uint8))
+        cv2.imwrite(f"{out_path}/{uuid}.png", predicted.astype(np.uint8))
 
+        contours = measure.find_contours(predicted, 0.5)
+        out_mask = np.zeros(predicted.shape, dtype=np.uint8)
+        for contour in contours:
+            contour = [[int(x[1]), int(x[0])] for x in contour]
+            poly = Polygon(contour)
+            if poly.area >= 100.0:
+                out_mask = cv2.fillPoly(out_mask, pts=[np.array(contour)], color=1)
+
+        
         # convert the prediction in RLE format
-        encoded_prediction = compute_submission_mask(uuid, predicted)
+        encoded_prediction = compute_submission_mask(uuid, out_mask)
         result.append(pd.DataFrame(encoded_prediction))
 
     # concatenate all dataframes
