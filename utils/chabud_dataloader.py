@@ -174,7 +174,7 @@ def get_dataloader(args):
     chabud_train = ChabudDataset(
         data_root=args.data_root,
         json_dir=args.vector_dir,
-        data_list=train_list,
+        data_list=train_list + val_list,
         bands=args.bands,
         bit8=bit8,
         swap=args.swap,
