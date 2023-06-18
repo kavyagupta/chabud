@@ -11,7 +11,6 @@ from PIL import Image
 import numpy as np
 import rasterio as rio
 import torch
-from torchmetrics.functional import dice
 from torchmetrics import JaccardIndex
 
 from models import get_model

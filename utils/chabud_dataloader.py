@@ -4,7 +4,6 @@ import json
 import base64
 import random
 
-import cv2
 import numpy as np
 from PIL import Image
 import rasterio as rio
