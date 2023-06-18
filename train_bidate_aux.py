@@ -61,10 +61,9 @@ def val(val_loader, net, criterion, device):
     dice = Dice(average="micro").to(device)
     jaccard_index = JaccardIndex(task="multiclass", num_classes=2).to(device)
 
-    for pre, post, mask, target_bands in tqdm(val_loader):
+    for pre, post, mask in tqdm(val_loader):
         # get the inputs; data is a list of [inputs, labels]
-        pre, post = pre.to(device), post.to(device)
-        mask, target_bands = mask.to(device), target_bands.to(device)
+        pre, post, mask = pre.to(device), post.to(device), mask.to(device)
 
         outputs, out_post, out_pre = net(pre, post)
         focal_loss = criterion(outputs, mask.long())
