@@ -70,7 +70,7 @@ def retrieve_validation_fold(args) -> Dict[str, NDArray]:
         bit8 = False
 
     result = defaultdict(dict)
-    with h5py.File(args.path, 'r') as fp:
+    with h5py.File(args.data_path, 'r') as fp:
         for uuid, values in fp.items():
             if values.attrs['fold'] != 0:
                 continue
