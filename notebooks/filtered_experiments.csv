@@ -40,7 +40,7 @@
 38,648b46ea9b8421650acb98f2,gs://geoengine-dataset-chabud/experiments/neat-kitten-149_648b46ea9b8421650acb98f2/epoch_103.pt,0.657141
 39,648e8ce59b8421650acbe698,gs://geoengine-dataset-chabud/experiments/golden-snipe-200_648e8ce59b8421650acbe698/epoch_145.pt,0.643554
 40,648b4b7c9b8421650acb994c,gs://geoengine-dataset-chabud/experiments/rapid-oryx-151_648b4b7c9b8421650acb994c/epoch_74.pt,0.640205
-41,648e8afd9b8421650acbe66d,gs://geoengine-dataset-chabud/experiments/warm-viper-196_648e8afd9b8421650acbe66d/epoch_50.pt,0.635922
+41,648e8afd9b8421650acbe66d,gs://geoengine-dataset-chabud/experiments/warm-viper-196_648e8afd9b8421650acbe66d/epoch_83.pt,0.636119
 42,648d8d0f9b8421650acbd083,gs://geoengine-dataset-chabud/experiments/cool-vervet-179_648d8d0f9b8421650acbd083/epoch_197.pt,0.635884
 43,647e6efa8a165c20d7a77b58,gs://geoengine-dataset-chabud/experiments/honest-hyena-18_647e6efa8a165c20d7a77b58/epoch_142.pt,0.635258
 44,64884a048a165c20d7a7fd60,gs://geoengine-dataset-chabud/experiments/expert-troll-70_64884a048a165c20d7a7fd60/epoch_149.pt,0.630533
