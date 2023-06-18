@@ -150,7 +150,7 @@ if __name__ == '__main__':
     model.load_state_dict(weight)
     _ = model.eval()
 
-    out_path = f"predictions/{args.arch}-{args.experiment_url.split('/')[-1]}"
+    out_path = f"predictions/{args.arch}-{args.experiment_url.split('=')[-1]}"
 
     if not os.path.exists(out_path):
         os.makedirs(out_path)
