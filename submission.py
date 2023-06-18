@@ -16,7 +16,6 @@ from numpy.typing import NDArray
 import torch
 import albumentations as A
 from skimage import measure
-from shapely.geometry import Polygon
 
 from models import get_model
 from utils.engine_hub import weight_and_experiment
