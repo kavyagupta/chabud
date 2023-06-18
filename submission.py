@@ -160,6 +160,7 @@ if __name__ == '__main__':
         # perform the prediction
         pre = torch.from_numpy(input_images['pre']).to(device).float().unsqueeze(0)
         post = torch.from_numpy(input_images['post']).to(device).float().unsqueeze(0)
+        print (pre.shape, post.shape)
         predicted = model(pre, post)
         predicted = torch.argmax(predicted, axis=1)
         predicted = predicted.data.cpu().numpy()
