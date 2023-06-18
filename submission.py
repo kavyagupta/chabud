@@ -79,9 +79,8 @@ def retrieve_validation_fold(args) -> Dict[str, NDArray]:
             if "pre_fire" not in values:
                 continue
             
-            img_pre = values['post_fire'][...]
-            img_post = values['pre_fire'][...]
-            print (img_pre.shape)
+            img_pre = values['post_fire'][...].transpose(2, 0, 1)
+            img_post = values['pre_fire'][...].transpose(2, 0, 1)
 
             pre = []
             post = []
@@ -162,7 +161,6 @@ if __name__ == '__main__':
         # perform the prediction
         pre = torch.from_numpy(input_images['pre']).to(device).float().unsqueeze(0)
         post = torch.from_numpy(input_images['post']).to(device).float().unsqueeze(0)
-        print (pre.shape, post.shape)
         predicted = model(pre, post)
         predicted = torch.argmax(predicted, axis=1)
         predicted = predicted.data.cpu().numpy()
