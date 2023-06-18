@@ -164,7 +164,7 @@ if __name__ == '__main__':
         predicted = model(pre, post)
         predicted = torch.argmax(predicted, axis=1)
         predicted = predicted.data.cpu().numpy()
-
+        print (predicted.shape)
         cv2.imwrite(f"{out_path}/{uuid}.png", predicted.astype(np.uint8))
 
         # convert the prediction in RLE format
