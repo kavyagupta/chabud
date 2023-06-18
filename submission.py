@@ -166,9 +166,9 @@ if __name__ == '__main__':
         post = torch.from_numpy(input_images['post']).to(device).float().unsqueeze(0)
         predicted = model(pre, post)
         predicted = torch.argmax(predicted, axis=1)
-        predicted = predicted.data.cpu().numpy()[0]
+        predicted = predicted.data.cpu().numpy()
 
-        cv2.imwrite(f"{out_path}/{uuid}.png", predicted.astype(np.uint8))
+        cv2.imwrite(f"{out_path}/{uuid}.png", predicted[0].astype(np.uint8))
 
         # contours = measure.find_contours(predicted, 0.5)
         # out_mask = np.zeros(predicted.shape, dtype=np.uint8)
