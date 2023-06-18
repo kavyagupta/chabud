@@ -52,6 +52,9 @@ def _stretch_8bit(band, lower_percent=0, higher_percent=98):
     return t.astype(np.uint8)
 
 def retrieve_validation_fold(args) -> Dict[str, NDArray]:
+    if isinstance(args.bands, str):
+        args.bands = list(map(int, args.bands.split(',')))
+        
     if args.bands == [1, 2, 3]:
         mean_bands = [0.406, 0.456, 0.485]
         std_bands = [0.225, 0.224, 0.229]
