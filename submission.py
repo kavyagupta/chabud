@@ -1,6 +1,7 @@
 import os 
 import json 
 import tqdm
+import glob
 import argparse
 from pathlib import Path
 from collections import defaultdict
@@ -139,9 +140,7 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
-    out_path = f"predictions/{args.arch}-thres{args.thres}-{args.experiment_url.split('=')[-1]}"
-
-    if not os.path.exists(out_path):
+    if len(glob.glob(f"predictions/*{args.experiment_url.split('=')[-1]}*")) == 0:
 
         device = torch.device("cuda:0")
         dst_path, _ = weight_and_experiment(args.experiment_url, best=True)
@@ -161,7 +160,8 @@ if __name__ == '__main__':
         model.load_state_dict(weight)
         _ = model.eval()
 
-        
+        out_path = f"predictions/{args.arch}-thres{args.thres}-{args.experiment_url.split('=')[-1]}"
+
         if not os.path.exists(out_path):
             os.makedirs(out_path)
 
