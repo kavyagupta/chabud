@@ -178,7 +178,7 @@ if __name__ == '__main__':
         predicted = predicted.data.cpu().numpy()
 
         cv2.imwrite(f"{out_path}/{uuid}.png", predicted[0].astype(np.uint8))
-        np.save(f"{out_path}/{uuid}.npz", logit)
+        np.save(f"{out_path}/{uuid}.npz", logit.data.cpu().numpy())
 
         # contours = measure.find_contours(predicted, 0.5)
         # out_mask = np.zeros(predicted.shape, dtype=np.uint8)
