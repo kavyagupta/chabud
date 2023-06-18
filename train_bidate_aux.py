@@ -3,15 +3,14 @@ import json
 from tqdm import tqdm
 from datetime import datetime
 
+import numpy as np
 import torch
 import torch.nn as nn
 import torch.optim as optim
 from torch.optim.lr_scheduler import MultiStepLR
 import torch.nn.functional as F
 
-from torchmetrics.functional import dice
-from torchmetrics.functional.classification import multiclass_jaccard_index
-
+from torchmetrics import Dice, JaccardIndex
 
 from engine import Engine
 
@@ -24,9 +23,10 @@ from utils.loss import get_loss
 
 def train_one_epoch(train_loader, net, criterion, 
                     optimizer, device):
-    running_loss = 0.0
-    running_score = 0.0
-    running_iou = 0.0
+    losses = []
+
+    dice = Dice(average="micro").to(device)
+    jaccard_index = JaccardIndex(task="multiclass", num_classes=2).to(device)
 
     for pre, post, mask in tqdm(train_loader):
         # get the inputs; data is a list of [inputs, labels]
@@ -34,52 +34,54 @@ def train_one_epoch(train_loader, net, criterion,
         
         # zero the parameter gradients
         optimizer.zero_grad()
-        outputs, bands = net(pre, post)
+        outputs, out_post, out_pre = net(pre, post)
         focal_loss = criterion(outputs, mask.long())
-        mse_loss = nn.MSELoss()(bands, post)
+        mse_loss = nn.MSELoss()(out_post * 10000, post) + nn.MSELoss()(out_pre * 10000, pre)
 
         loss = focal_loss + mse_loss 
 
         outputs = torch.argmax(outputs, axis=1)
         score = dice(outputs, mask)
-        iou = multiclass_jaccard_index(outputs, mask, num_classes=2)
+        iou = jaccard_index(outputs, mask)
         loss.backward()
         optimizer.step()
 
-        running_loss += loss.item()
-        running_score += score.item()
-        running_iou += iou.item()
+        losses.append(loss.item())
 
-    return running_loss / len(train_loader), running_score / len(train_loader), running_iou / len(train_loader)
+    score = dice.compute()
+    iou = jaccard_index.compute()
+
+    return np.mean(losses), score.item(), iou.item()
 
 def val(val_loader, net, criterion, device):
     # net.eval()
 
-    running_loss = 0.0
-    running_score = 0.0
-    running_iou = 0.0
+    losses = []
+
+    dice = Dice(average="micro").to(device)
+    jaccard_index = JaccardIndex(task="multiclass", num_classes=2).to(device)
 
     for pre, post, mask, target_bands in tqdm(val_loader):
         # get the inputs; data is a list of [inputs, labels]
         pre, post = pre.to(device), post.to(device)
         mask, target_bands = mask.to(device), target_bands.to(device)
 
-        outputs, bands = net(pre, post)
+        outputs, out_post, out_pre = net(pre, post)
         focal_loss = criterion(outputs, mask.long())
-        mse_loss = nn.MSELoss()(bands, target_bands)
+        mse_loss = nn.MSELoss()(out_post * 10000, post) + nn.MSELoss()(out_pre * 10000, pre)
 
         loss = focal_loss + mse_loss 
      
         outputs = torch.argmax(outputs, axis=1)
         score = dice(outputs, mask)
-        iou = multiclass_jaccard_index(outputs, mask, num_classes=2)
+        iou = jaccard_index(outputs, mask)
         
-        running_loss += loss.item()
-        running_score += score.item()
-        running_iou += iou.item()
+        losses.append(loss.item())
 
-    return running_loss / len(val_loader), running_score / len(val_loader), running_iou / len(val_loader)
+    score = dice.compute()
+    iou = jaccard_index.compute()
 
+    return np.mean(losses), score.item(), iou.item()
 
 
 def main():

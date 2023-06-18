@@ -18,7 +18,8 @@ class BiDateConcatNetAux(nn.Module):
         self.up3 = up(256+128, 64)
         self.up4 = up(128+64, 64)
         self.outc = outconv(64, n_classes)
-        self.out_bands = outconv(64, n_channels)
+        self.out_post = outconv(64, n_channels)
+        self.out_pre = outconv(64, n_channels)
 
     def forward(self, x_d1, x_d2):
         x1_d1 = self.inc(x_d1)
@@ -38,8 +39,9 @@ class BiDateConcatNetAux(nn.Module):
         x = self.up3(x, torch.cat([x2_d2 , x2_d1], dim=1))
         x = self.up4(x, torch.cat([x1_d2 , x1_d1], dim=1))
         out_mask = self.outc(x)
-        out_bands = self.out_bands(x)
-        return out_mask, out_bands
+        out_post = self.out_post(x)
+        out_pre = self.out_pre(x)
+        return out_mask, out_post, out_pre
     
     
 
