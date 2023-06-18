@@ -78,11 +78,12 @@ def retrieve_validation_fold(args) -> Dict[str, NDArray]:
     result = defaultdict(dict)
     with h5py.File(args.data_path, 'r') as fp:
         for uuid, values in fp.items():
-            if values.attrs['fold'] != 0:
-                continue
+            if 'eval' in args.data_path:
+                if values.attrs['fold'] != 0:
+                    continue
 
-            if "pre_fire" not in values:
-                continue
+                if "pre_fire" not in values:
+                    continue
             
             img_pre = values['post_fire'][...].transpose(2, 0, 1)
             img_post = values['pre_fire'][...].transpose(2, 0, 1)
