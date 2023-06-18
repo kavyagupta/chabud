@@ -1,5 +1,5 @@
 ,id,bestModel,iou
-0,648f58bf9b8421650acbf5e6,gs://geoengine-dataset-chabud/experiments/ace-heron-203_648f58bf9b8421650acbf5e6/epoch_18.pt,0.801985
+0,648f58bf9b8421650acbf5e6,gs://geoengine-dataset-chabud/experiments/ace-heron-203_648f58bf9b8421650acbf5e6/epoch_57.pt,0.804774
 1,648e8b509b8421650acbe673,gs://geoengine-dataset-chabud/experiments/mint-leech-197_648e8b509b8421650acbe673/epoch_195.pt,0.790943
 2,648e8ec69b8421650acbe6c7,gs://geoengine-dataset-chabud/experiments/tidy-ocelot-201_648e8ec69b8421650acbe6c7/epoch_180.pt,0.78069
 3,648279488a165c20d7a7aa9b,gs://geoengine-dataset-chabud/experiments/novel-cicada-49_648279488a165c20d7a7aa9b/epoch_53.pt,0.779973
@@ -9,7 +9,7 @@
 7,6484f8378a165c20d7a7e2af,gs://geoengine-dataset-chabud/experiments/apt-krill-51_6484f8378a165c20d7a7e2af/epoch_33.pt,0.760161
 8,648db8619b8421650acbd557,gs://geoengine-dataset-chabud/experiments/intent-dragon-192_648db8619b8421650acbd557/epoch_159.pt,0.758013
 9,648daded9b8421650acbd426,gs://geoengine-dataset-chabud/experiments/on-snipe-188_648daded9b8421650acbd426/epoch_181.pt,0.748884
-10,648e8f2b9b8421650acbe6d4,gs://geoengine-dataset-chabud/experiments/joint-deer-202_648e8f2b9b8421650acbe6d4/epoch_98.pt,0.744235
+10,648e8f2b9b8421650acbe6d4,gs://geoengine-dataset-chabud/experiments/joint-deer-202_648e8f2b9b8421650acbe6d4/epoch_116.pt,0.744731
 11,6483a8138a165c20d7a7ba22,gs://geoengine-dataset-chabud/experiments/noble-horse-50_6483a8138a165c20d7a7ba22/epoch_10.pt,0.743427
 12,648b9d5a9b8421650acba32c,gs://geoengine-dataset-chabud/experiments/model-elk-175_648b9d5a9b8421650acba32c/epoch_110.pt,0.740927
 13,648e8b939b8421650acbe678,gs://geoengine-dataset-chabud/experiments/cute-cobra-199_648e8b939b8421650acbe678/epoch_191.pt,0.728891
@@ -41,7 +41,7 @@
 39,648b46ea9b8421650acb98f2,gs://geoengine-dataset-chabud/experiments/neat-kitten-149_648b46ea9b8421650acb98f2/epoch_103.pt,0.657141
 40,648e8ce59b8421650acbe698,gs://geoengine-dataset-chabud/experiments/golden-snipe-200_648e8ce59b8421650acbe698/epoch_145.pt,0.643554
 41,648b4b7c9b8421650acb994c,gs://geoengine-dataset-chabud/experiments/rapid-oryx-151_648b4b7c9b8421650acb994c/epoch_74.pt,0.640205
-42,648e8afd9b8421650acbe66d,gs://geoengine-dataset-chabud/experiments/warm-viper-196_648e8afd9b8421650acbe66d/epoch_119.pt,0.63827
+42,648e8afd9b8421650acbe66d,gs://geoengine-dataset-chabud/experiments/warm-viper-196_648e8afd9b8421650acbe66d/epoch_122.pt,0.640021
 43,648d8d0f9b8421650acbd083,gs://geoengine-dataset-chabud/experiments/cool-vervet-179_648d8d0f9b8421650acbd083/epoch_197.pt,0.635884
 44,647e6efa8a165c20d7a77b58,gs://geoengine-dataset-chabud/experiments/honest-hyena-18_647e6efa8a165c20d7a77b58/epoch_142.pt,0.635258
 45,64884a048a165c20d7a7fd60,gs://geoengine-dataset-chabud/experiments/expert-troll-70_64884a048a165c20d7a7fd60/epoch_149.pt,0.630533
@@ -64,10 +64,10 @@
 62,648b4d099b8421650acb9978,gs://geoengine-dataset-chabud/experiments/wanted-imp-155_648b4d099b8421650acb9978/epoch_88.pt,0.569231
 63,648b4cee9b8421650acb9975,gs://geoengine-dataset-chabud/experiments/daring-mole-154_648b4cee9b8421650acb9975/epoch_44.pt,0.564174
 64,648b4cd39b8421650acb9973,gs://geoengine-dataset-chabud/experiments/helped-eft-153_648b4cd39b8421650acb9973/epoch_56.pt,0.559114
-65,648f5a989b8421650acbf5ff,gs://geoengine-dataset-chabud/experiments/cute-tick-205_648f5a989b8421650acbf5ff/epoch_36.pt,0.545335
-66,648b4d299b8421650acb997b,gs://geoengine-dataset-chabud/experiments/tops-pika-156_648b4d299b8421650acb997b/epoch_57.pt,0.534165
-67,64884e0e8a165c20d7a7fdd8,gs://geoengine-dataset-chabud/experiments/cute-tahr-72_64884e0e8a165c20d7a7fdd8/epoch_27.pt,0.530348
-68,648b1df49b8421650acb95be,gs://geoengine-dataset-chabud/experiments/fancy-elk-147_648b1df49b8421650acb95be/epoch_21.pt,0.529905
-69,648848e68a165c20d7a7fd40,gs://geoengine-dataset-chabud/experiments/fast-emu-68_648848e68a165c20d7a7fd40/epoch_2.pt,0.521783
-70,6488c89e8a165c20d7a80eea,gs://geoengine-dataset-chabud/experiments/immune-cicada-85_6488c89e8a165c20d7a80eea/epoch_26.pt,0.517129
-71,648f5ab79b8421650acbf604,gs://geoengine-dataset-chabud/experiments/picked-gnu-206_648f5ab79b8421650acbf604/epoch_34.pt,0.515793
+65,648f5ab79b8421650acbf604,gs://geoengine-dataset-chabud/experiments/picked-gnu-206_648f5ab79b8421650acbf604/epoch_53.pt,0.555215
+66,648f5a989b8421650acbf5ff,gs://geoengine-dataset-chabud/experiments/cute-tick-205_648f5a989b8421650acbf5ff/epoch_36.pt,0.545335
+67,648b4d299b8421650acb997b,gs://geoengine-dataset-chabud/experiments/tops-pika-156_648b4d299b8421650acb997b/epoch_57.pt,0.534165
+68,64884e0e8a165c20d7a7fdd8,gs://geoengine-dataset-chabud/experiments/cute-tahr-72_64884e0e8a165c20d7a7fdd8/epoch_27.pt,0.530348
+69,648b1df49b8421650acb95be,gs://geoengine-dataset-chabud/experiments/fancy-elk-147_648b1df49b8421650acb95be/epoch_21.pt,0.529905
+70,648848e68a165c20d7a7fd40,gs://geoengine-dataset-chabud/experiments/fast-emu-68_648848e68a165c20d7a7fd40/epoch_2.pt,0.521783
+71,6488c89e8a165c20d7a80eea,gs://geoengine-dataset-chabud/experiments/immune-cicada-85_6488c89e8a165c20d7a80eea/epoch_26.pt,0.517129

@@ -165,6 +165,9 @@ if __name__ == '__main__':
 
     out_path = f"predictions/{args.arch}-thres{args.thres}-{args.experiment_url.split('=')[-1]}"
 
+    if 'test' in args.data_path:
+        out_path += '-test'
+
     if not os.path.exists(out_path):
         os.makedirs(out_path)
 
