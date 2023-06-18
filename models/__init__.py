@@ -3,6 +3,7 @@ import torch
 from .bidate_model import BiDateNet
 from .siamnet_diff import SiamUnet_diff
 from .bidate_concat import BiDateConcatNet
+from .bidate_concat import BiDateConcatDeepNet
 from .bidate_concat_aux import BiDateConcatNetAux
 from .bidate_deeplab import (bidate_deeplab_resnet50,
                              bidate_deeplab_resnet101,
@@ -22,6 +23,9 @@ def get_model(args, n_channels=12, n_classes=2):
         net = SiamUnet_diff(n_channels=n_channels, 
                             n_classes=n_classes)
     elif args.arch == "bidate_concat":
+        net = BiDateConcatDeepNet(n_channels=n_channels, 
+                              n_classes=n_classes)
+    elif args.arch == "bidate_concat_deep":
         net = BiDateConcatNet(n_channels=n_channels, 
                               n_classes=n_classes)
     elif args.arch == "bidate_concat_aux":
