@@ -129,7 +129,8 @@ if __name__ == '__main__':
         "--data-path", type=str, required=True, help="data-path")
 
     parser.add_argument(
-        "--csv-name", type=str, required=True, help="prediction csv name")
+        "--thres", type=int, required=True, help="prediction csv name")
+    
 
 
     args = parser.parse_args()
@@ -152,7 +153,7 @@ if __name__ == '__main__':
     model.load_state_dict(weight)
     _ = model.eval()
 
-    out_path = f"predictions/{args.arch}-{args.experiment_url.split('=')[-1]}"
+    out_path = f"predictions/{args.arch}-thres{args.thres}-{args.experiment_url.split('=')[-1]}"
 
     if not os.path.exists(out_path):
         os.makedirs(out_path)
@@ -174,7 +175,7 @@ if __name__ == '__main__':
         for contour in contours:
             contour = [[int(x[1]), int(x[0])] for x in contour]
             poly = Polygon(contour)
-            if poly.area >= 100.0:
+            if poly.area >= args.thres:
                 out_mask = cv2.fillPoly(out_mask, pts=[np.array(contour)], color=1)
 
         
