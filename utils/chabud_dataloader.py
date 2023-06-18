@@ -194,7 +194,7 @@ def get_dataloader(args):
 
     train_loader = DataLoader(chabud_train, batch_size=args.batch_size, 
                               num_workers=args.num_workers, shuffle=True,
-                              pin_memory=True)
+                              pin_memory=True, drop_last=True)
     val_loader = DataLoader(chabud_val, batch_size=args.batch_size, 
                             num_workers=args.num_workers, shuffle=False, 
                             pin_memory=True, drop_last=True)
