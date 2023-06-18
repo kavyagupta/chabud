@@ -3,7 +3,7 @@ import torch
 from .bidate_model import BiDateNet
 from .siamnet_diff import SiamUnet_diff
 from .bidate_concat import BiDateConcatNet
-from .bidate_concat import BiDateConcatDeepNet
+from .bidate_concat_deep import BiDateConcatDeepNet
 from .bidate_concat_aux import BiDateConcatNetAux
 from .bidate_deeplab import (bidate_deeplab_resnet50,
                              bidate_deeplab_resnet101,
