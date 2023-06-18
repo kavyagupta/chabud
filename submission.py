@@ -131,6 +131,11 @@ if __name__ == '__main__':
     parser.add_argument(
         "--thres", type=int, required=True, help="prediction csv name")
     
+    parser.add_argument(
+        "--bands", default="0,1,2,3,4,5,6,7,8,9,10,11"
+    )
+    
+    parser.add_argument("--normalize", action='store_true', help="normalize")  
 
 
     args = parser.parse_args()
