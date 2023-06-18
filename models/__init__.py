@@ -23,10 +23,10 @@ def get_model(args, n_channels=12, n_classes=2):
         net = SiamUnet_diff(n_channels=n_channels, 
                             n_classes=n_classes)
     elif args.arch == "bidate_concat":
-        net = BiDateConcatDeepNet(n_channels=n_channels, 
+        net = BiDateConcatNet(n_channels=n_channels, 
                               n_classes=n_classes)
     elif args.arch == "bidate_concat_deep":
-        net = BiDateConcatNet(n_channels=n_channels, 
+        net = BiDateConcatDeepNet(n_channels=n_channels, 
                               n_classes=n_classes)
     elif args.arch == "bidate_concat_aux":
         net = BiDateConcatNetAux(n_channels=n_channels, 
