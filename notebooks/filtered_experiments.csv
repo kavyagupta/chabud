@@ -6,10 +6,10 @@
 4,648e8b7b9b8421650acbe677,gs://geoengine-dataset-chabud/experiments/hot-moose-198_648e8b7b9b8421650acbe677/epoch_54.pt,0.771536
 5,648dadd09b8421650acbd422,gs://geoengine-dataset-chabud/experiments/key-mite-187_648dadd09b8421650acbd422/epoch_186.pt,0.770342
 6,6484f8378a165c20d7a7e2af,gs://geoengine-dataset-chabud/experiments/apt-krill-51_6484f8378a165c20d7a7e2af/epoch_33.pt,0.760161
-7,648daded9b8421650acbd426,gs://geoengine-dataset-chabud/experiments/on-snipe-188_648daded9b8421650acbd426/epoch_181.pt,0.748884
-8,6483a8138a165c20d7a7ba22,gs://geoengine-dataset-chabud/experiments/noble-horse-50_6483a8138a165c20d7a7ba22/epoch_10.pt,0.743427
-9,648b9d5a9b8421650acba32c,gs://geoengine-dataset-chabud/experiments/model-elk-175_648b9d5a9b8421650acba32c/epoch_110.pt,0.740927
-10,648db8619b8421650acbd557,gs://geoengine-dataset-chabud/experiments/intent-dragon-192_648db8619b8421650acbd557/epoch_144.pt,0.730018
+7,648db8619b8421650acbd557,gs://geoengine-dataset-chabud/experiments/intent-dragon-192_648db8619b8421650acbd557/epoch_159.pt,0.758013
+8,648daded9b8421650acbd426,gs://geoengine-dataset-chabud/experiments/on-snipe-188_648daded9b8421650acbd426/epoch_181.pt,0.748884
+9,6483a8138a165c20d7a7ba22,gs://geoengine-dataset-chabud/experiments/noble-horse-50_6483a8138a165c20d7a7ba22/epoch_10.pt,0.743427
+10,648b9d5a9b8421650acba32c,gs://geoengine-dataset-chabud/experiments/model-elk-175_648b9d5a9b8421650acba32c/epoch_110.pt,0.740927
 11,648e8b939b8421650acbe678,gs://geoengine-dataset-chabud/experiments/cute-cobra-199_648e8b939b8421650acbe678/epoch_191.pt,0.728891
 12,648b1df09b8421650acb95bd,gs://geoengine-dataset-chabud/experiments/better-stag-146_648b1df09b8421650acb95bd/epoch_191.pt,0.727446
 13,648b9d369b8421650acba323,gs://geoengine-dataset-chabud/experiments/sharp-moray-171_648b9d369b8421650acba323/epoch_76.pt,0.724133
