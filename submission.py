@@ -139,56 +139,59 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
-    device = torch.device("cuda:0")
-    dst_path, _ = weight_and_experiment(args.experiment_url, best=True)
-    fin = open('/'.join(dst_path.split('/')[:-1]) + '/epxeriment_config.json', 'r')
-    metadata = json.load(fin)
-    args.__dict__.update(metadata)
-    fin.close()
-
-    validation_fold = retrieve_validation_fold(args)
-
-    # use a list to accumulate results
-    result = []
-    # instantiate the model
-    model = get_model(args)
-    model.to(device)
-    weight = torch.load(dst_path)
-    model.load_state_dict(weight)
-    _ = model.eval()
-
     out_path = f"predictions/{args.arch}-thres{args.thres}-{args.experiment_url.split('=')[-1]}"
 
     if not os.path.exists(out_path):
-        os.makedirs(out_path)
 
-    for uuid in tqdm.tqdm(validation_fold):
-        input_images = validation_fold[uuid]
+        device = torch.device("cuda:0")
+        dst_path, _ = weight_and_experiment(args.experiment_url, best=True)
+        fin = open('/'.join(dst_path.split('/')[:-1]) + '/epxeriment_config.json', 'r')
+        metadata = json.load(fin)
+        args.__dict__.update(metadata)
+        fin.close()
 
-        # perform the prediction
-        pre = torch.from_numpy(input_images['pre']).to(device).float().unsqueeze(0)
-        post = torch.from_numpy(input_images['post']).to(device).float().unsqueeze(0)
-        predicted = model(pre, post)
-        predicted = torch.argmax(predicted, axis=1)
-        predicted = predicted.data.cpu().numpy()
+        validation_fold = retrieve_validation_fold(args)
 
-        cv2.imwrite(f"{out_path}/{uuid}.png", predicted[0].astype(np.uint8))
-
-        # contours = measure.find_contours(predicted, 0.5)
-        # out_mask = np.zeros(predicted.shape, dtype=np.uint8)
-        # for contour in contours:
-        #     if len(contour) > 4:
-        #         contour = [[int(x[1]), int(x[0])] for x in contour]
-        #         poly = Polygon(contour)
-        #         if poly.area >= args.thres:
-        #             out_mask = cv2.fillPoly(out_mask, pts=[np.array(contour)], color=1)
+        # use a list to accumulate results
+        result = []
+        # instantiate the model
+        model = get_model(args)
+        model.to(device)
+        weight = torch.load(dst_path)
+        model.load_state_dict(weight)
+        _ = model.eval()
 
         
-        # convert the prediction in RLE format
-        encoded_prediction = compute_submission_mask(uuid, predicted)
-        result.append(pd.DataFrame(encoded_prediction))
+        if not os.path.exists(out_path):
+            os.makedirs(out_path)
 
-    # concatenate all dataframes
-    submission_df = pd.concat(result)
-    submission_df.to_csv(f"{out_path}.csv", 
-                         index=False)
+        for uuid in tqdm.tqdm(validation_fold):
+            input_images = validation_fold[uuid]
+
+            # perform the prediction
+            pre = torch.from_numpy(input_images['pre']).to(device).float().unsqueeze(0)
+            post = torch.from_numpy(input_images['post']).to(device).float().unsqueeze(0)
+            predicted = model(pre, post)
+            predicted = torch.argmax(predicted, axis=1)
+            predicted = predicted.data.cpu().numpy()
+
+            cv2.imwrite(f"{out_path}/{uuid}.png", predicted[0].astype(np.uint8))
+
+            # contours = measure.find_contours(predicted, 0.5)
+            # out_mask = np.zeros(predicted.shape, dtype=np.uint8)
+            # for contour in contours:
+            #     if len(contour) > 4:
+            #         contour = [[int(x[1]), int(x[0])] for x in contour]
+            #         poly = Polygon(contour)
+            #         if poly.area >= args.thres:
+            #             out_mask = cv2.fillPoly(out_mask, pts=[np.array(contour)], color=1)
+
+            
+            # convert the prediction in RLE format
+            encoded_prediction = compute_submission_mask(uuid, predicted)
+            result.append(pd.DataFrame(encoded_prediction))
+
+        # concatenate all dataframes
+        submission_df = pd.concat(result)
+        submission_df.to_csv(f"{out_path}.csv", 
+                            index=False)
