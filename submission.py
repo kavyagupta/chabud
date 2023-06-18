@@ -173,10 +173,11 @@ if __name__ == '__main__':
         contours = measure.find_contours(predicted, 0.5)
         out_mask = np.zeros(predicted.shape, dtype=np.uint8)
         for contour in contours:
-            contour = [[int(x[1]), int(x[0])] for x in contour]
-            poly = Polygon(contour)
-            if poly.area >= args.thres:
-                out_mask = cv2.fillPoly(out_mask, pts=[np.array(contour)], color=1)
+            if len(contour) > 4:
+                contour = [[int(x[1]), int(x[0])] for x in contour]
+                poly = Polygon(contour)
+                if poly.area >= args.thres:
+                    out_mask = cv2.fillPoly(out_mask, pts=[np.array(contour)], color=1)
 
         
         # convert the prediction in RLE format
