@@ -81,6 +81,7 @@ def retrieve_validation_fold(args) -> Dict[str, NDArray]:
             
             img_pre = values['post_fire'][...]
             img_post = values['pre_fire'][...]
+            print (img_pre.shape)
 
             pre = []
             post = []
