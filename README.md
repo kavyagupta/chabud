@@ -9,6 +9,7 @@
 @inproceedings{verma:hal-04225474,
   TITLE = {{Post Wildfire Burnt-up Detection using Siamese UNet}},
   AUTHOR = {Verma, Sagar and Gupta, Kavya},
+  URL = {https://hal.science/hal-04225474},
   BOOKTITLE = {{ECML PKDD 2023 - European Conference on Machine Learning and Principles and Practice of Knowledge Discovery in Databases}},
   ADDRESS = {Turin, Italy},
   YEAR = {2023}
